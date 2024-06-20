@@ -1,0 +1,16 @@
+.actions-bar {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    flex-wrap: wrap;
+}
+
+.actions-bar .label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.action-button {
+    margin-right: 10px;
+}

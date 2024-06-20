@@ -24,6 +24,7 @@ export default defineConfig({
                 'resources/js/components/utils/modal.module.js',
                 'resources/css/components/utils/btn.css',
                 'resources/css/dropzone/dropzone-amd-module.js',
+                'resources/js/studentUpload-create.js'
             ],
             refresh: true,
         }),

@@ -24,7 +24,7 @@ class ProcessCorsightQueue extends Command
 
     public function handle()
     {
-        $records = CorsightQueue::whereIn('status', ['NOT_SEND', 'ERROR'])->get();
+        $records = CorsightQueue::whereIn('status', 'NOT_SEND')->get();
 
         foreach ($records as $record) {
             try {

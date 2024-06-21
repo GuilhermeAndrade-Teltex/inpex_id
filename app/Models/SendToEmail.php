@@ -26,7 +26,6 @@ class SendToEmail extends Model
         'content_description',
         'attach',
         'config_file',
-        'users_email',
         'log',
         'status',
         'module',

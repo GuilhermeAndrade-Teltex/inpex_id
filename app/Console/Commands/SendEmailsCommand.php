@@ -30,7 +30,7 @@ class SendEmailsCommand extends Command
         $emails = SendToEmail::whereIn('status', ['NOT_SEND', 'ERROR'])->get();
 
         foreach ($emails as $email) {
-            $mailerConfig = $email->config_file ?: 'intranet';
+            $mailerConfig = $email->config_file ?: 'InpexID';
 
             config([
                 'mail.mailers' => [

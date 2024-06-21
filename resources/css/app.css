@@ -1,0 +1,17 @@
+/* app.css */
+@import "bootstrap/css/bootstrap.css";
+@import "animate/animate.compat.css";
+@import "font-awesome/css/all.min.css";
+@import "boxicons/css/boxicons.min.css";
+@import "magnific-popup/magnific-popup.css";
+@import "bootstrap-datepicker/css/bootstrap-datepicker3.css";
+@import "jquery-ui/jquery-ui.css";
+@import "jquery-ui/jquery-ui.theme.css";
+@import "bootstrap-multiselect/css/bootstrap-multiselect.css";
+@import "morris/morris.css";
+@import "skins/default.css";
+@import "select2/css/select2.css";
+@import "select2-bootstrap-theme/select2-bootstrap.css";
+@import "datatables/media/css/dataTables.bootstrap5.css";
+@import "dropzone/min/dropzone.min.css";
+@import "pnotify/pnotify.custom.css";

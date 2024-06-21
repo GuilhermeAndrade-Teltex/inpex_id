@@ -24,7 +24,7 @@ class ProcessCorsightQueue extends Command
 
     public function handle()
     {
-        $records = CorsightQueue::where('status', ['NOT_SEND', 'ERROR'])->get();
+        $records = CorsightQueue::whereIn('status', ['NOT_SEND', 'ERROR'])->get();
 
         foreach ($records as $record) {
             try {
@@ -82,6 +82,8 @@ class ProcessCorsightQueue extends Command
 
             $record->updated_at = now();
             $record->save();
+
+            sleep(10);
         }
     }
 }

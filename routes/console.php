@@ -10,4 +10,4 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('emails:send')->hourly();
-$schedule->command('corsight:process-queue')->everyFiveMinutes();
+Schedule::command('corsight:process-queue')->everyFiveMinutes();

@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::
     })->name('dashboard');
 
     Route::get('perfil/' . Auth::user(), [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/logout', [ProfileController::class, 'logout'])->name('profile.logout');
 
     // User
     Route::get('/usuarios', [UserController::class, 'index'])->name('user.index');
@@ -101,8 +102,6 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::
     Route::get('/corsight/watchlists', [CorsightController::class, 'listWatchlist'])->name('corsight.watchlist');
     Route::get('/corsight/pessoas', [CorsightController::class, 'listFaces'])->name('corsight.faces');
     // Route::get('/corsight/faces-data', [CorsightController::class, 'getFacesData']);
-
-    Route::post('/logout', [ProfileController::class, 'logout'])->name('profile.logout');
 });
 
 Route::middleware([EventsMiddleware::class, 'throttle:60,1'])->group(function () {

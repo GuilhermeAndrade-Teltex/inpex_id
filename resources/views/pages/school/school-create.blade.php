@@ -30,14 +30,12 @@
                 </div>
 
                 <div class="row form-group pb-3">
-                    <x-form_components.input name="education_level" label="Nível de Ensino" type_input="text"
-                        form_group_width="6" />
                     <x-form_components.input name="responsible" label="Responsável" type_input="text"
                         form_group_width="6" />
+                    <x-form_components.input name="regional" label="Regional" type_input="text" form_group_width="6" />
                 </div>
 
                 <div class="row form-group pb-3">
-                    <x-form_components.input name="cnpj" label="CNPJ" type_input="text" form_group_width="6" />
                     <x-form_components.input name="cep" label="CEP" type_input="text" form_group_width="6" />
                 </div>
 

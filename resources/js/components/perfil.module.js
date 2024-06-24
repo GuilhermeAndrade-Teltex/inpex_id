@@ -10,6 +10,6 @@ $(document).on("click", "button#btn_logout", function (e) {
             window.location = `${window.BASE_URL}/login`;
         }
     }).catch(error => {
-        console.error("There was an error logging out:", error);
+        console.error("Ocorreu um erro ao fazer o logout:", error);
     });
 });

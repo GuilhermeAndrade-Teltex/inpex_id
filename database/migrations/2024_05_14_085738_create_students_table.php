@@ -15,12 +15,12 @@ return new class extends Migration {
             $table->foreignId('school_id')->constrained('schools');
             $table->string('name');
             $table->string('cpf')->unique();
+            $table->string('cpf_responsible');
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
             $table->string('enrollment')->nullable();
             $table->string('grade')->nullable();
             $table->string('class');
-            $table->string('education_level')->nullable();
             $table->string('responsible_name')->nullable();
             $table->string('responsible_phone')->nullable();
             $table->string('responsible_email')->nullable();

@@ -18,7 +18,7 @@
                 {{-- <a role="menuitem" tabindex="-1" href="{{ route('user.profile') }}"><i
                         class="bx bx-user-circle"></i>
                     Meu Perfil</a> --}}
-                <a role="menuitem" tabindex="-1" href=""><i class="bx bx-user-circle"></i>
+                <a role="menuitem" tabindex="-1" href="{{route('profile.show')}}"><i class="bx bx-user-circle"></i>
                     Meu Perfil</a>
             </li>
             <li>
@@ -28,7 +28,7 @@
     </div>
 
     <x-utils.modal headerTitle="Confirmar" maxWidth="xs"
-        footerBtn1='{{ json_encode(array("id" => "btn_logout", "label" => "Cadastrar", "color" => "primary")) }}'
+        footerBtn1='{{ json_encode(array("id" => "btn_logout", "label" => "Sair", "color" => "primary")) }}'
         footerBtn2='{{ json_encode(array("id" => "btn_cancel", "label" => "Cancelar", "color" => "default")) }}'>
         <p>Deseja efetuar o logout ?</p>
     </x-utils.modal>

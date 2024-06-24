@@ -13,6 +13,7 @@ class Student extends Model
         'school_id',
         'name',
         'cpf',
+        'cpf_responsible',
         'date_of_birth',
         'gender',
         'enrollment',

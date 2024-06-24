@@ -80,7 +80,7 @@ class StudentController extends Controller
             'enrollment' => $request->input('enrollment'),
             'grade' => $request->input('grade'),
             'class' => $request->input('class'),
-            'education_level' => $request->input('education_level'),
+            'cpf_responsible' => $request->input('cpf_responsible'),
             'responsible_name' => $request->input('responsible_name'),
             'responsible_phone' => $request->input('responsible_phone'),
             'responsible_email' => $request->input('responsible_email'),

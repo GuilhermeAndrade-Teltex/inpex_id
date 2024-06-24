@@ -13,11 +13,14 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UsersRoleController;
 
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::class])->name('dashboard');
+Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::class])->group(function () {
+    // Dashboard
+    Route::get('/', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-Route::middleware(['auth', 'verified', MenuMiddleware::class])->group(function () {
+    Route::get('perfil/' . Auth::user(), [ProfileController::class, 'show'])->name('profile.show');
+
     // User
     Route::get('/usuarios', [UserController::class, 'index'])->name('user.index');
     Route::get('/usuarios/inserir', [UserController::class, 'create'])->name('user.create');
@@ -99,7 +102,7 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class])->group(function (
     Route::get('/corsight/pessoas', [CorsightController::class, 'listFaces'])->name('corsight.faces');
     // Route::get('/corsight/faces-data', [CorsightController::class, 'getFacesData']);
 
-    Route::post('/logout', [ProfileController::class, 'destroy'])->name('profile.logout');
+    Route::post('/logout', [ProfileController::class, 'logout'])->name('profile.logout');
 });
 
 Route::middleware([EventsMiddleware::class, 'throttle:60,1'])->group(function () {

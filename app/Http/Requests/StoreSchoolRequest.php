@@ -25,13 +25,12 @@ class StoreSchoolRequest extends BasicRequest
 
         $rules['client_id'] = ['required'];
         $rules['name'][] = 'required';
-        $rules['education_level'] = ['required'];
         $rules['responsible'] = ['required'];
-        $rules['cnpj'] = ['required', 'formato_cnpj', 'unique:' . Client::class];
+        $rules['regional'] = ['required'];
         $rules["cep"] = ['required', 'formato_cep'];
         $rules["address"] = ['required', 'max:255'];
         $rules["number"] = ['required'];
-        $rules["complement"] = ['string', 'max:255'];
+        $rules["complement"] = ['nullable', 'string', 'max:255'];
         $rules["district"] = ['required', 'string', 'max:255'];
         $rules["city"] = ['required', 'string', 'max:255'];
         $rules["state"] = ['string'];

@@ -36,7 +36,7 @@ class StoreClientRequest extends BasicRequest
         $rules["cep"] = ['required', 'digits:8'];
         $rules["address"] = ['required', 'max:255'];
         $rules["number"] = ['required'];
-        $rules["complement"] = ['string', 'max:255'];
+        $rules["complement"] = ['nullable', 'string', 'max:255'];
         $rules["district"] = ['required', 'string', 'max:255'];
         $rules["city"] = ['required', 'string', 'max:255'];
         $rules["state"] = ['string'];

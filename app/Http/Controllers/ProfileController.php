@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\BreadcrumbService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -11,6 +13,26 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    protected $breadcrumbService;
+
+    public function __construct(BreadcrumbService $breadcrumbService)
+    {
+        $this->breadcrumbService = $breadcrumbService;
+    }
+
+    public function show() {
+        $user = Auth::user();
+
+        $breadcrumbsItems = [
+            'Home' => 'dashboard',
+            'Perfil' => 'profile.show',
+        ];
+
+        $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
+        $pageTitle = 'Meu Perfil';
+
+        return view('profile.profile', compact('user','breadcrumbs','pageTitle'));
+    }
     /**
      * Display the user's profile form.
      */
@@ -18,7 +40,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        return view('profile.edit', ['user' => $request->user(),]);
+        return view('profile.edit', ['user' => $request->user()]);
     }
 
     /**
@@ -42,12 +64,26 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        try {    
-            Auth::logout();
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ]);
 
-            return response()->json(['success'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao fazer logout: ' . $e->getMessage()], 500);
-        }
+        $user = $request->user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return Redirect::to('/');
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        Auth::logout();
+
+        return response()->json(['status' => 'SUCCESS']);
     }
 }

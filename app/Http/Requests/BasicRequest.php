@@ -73,9 +73,7 @@ class BasicRequest extends FormRequest
             'class.max' => 'A turma não pode exceder :max caracteres.',
             'class.regex' => 'O campo turma não pode começar com um caractere especial.',
 
-            'education_level.required' => 'O campo nível de ensino é obrigatório.',
-            'education_level.string' => 'O nível de ensino deve ser um texto.',
-            'education_level.max' => 'O nível de ensino não pode exceder :max caracteres.',
+            'regional.required' => 'O campo regional é obrigatório.',
 
             'responsible_name.required' => 'O campo nome do responsável é obrigatório.',
             'responsible_name.string' => 'O nome do responsável deve ser um texto.',
@@ -122,6 +120,10 @@ class BasicRequest extends FormRequest
 
             'observations.string' => 'As observações devem ser um texto.',
             'observations.max' => 'As observações não podem exceder :max caracteres.',
+
+            'client_id' => 'O campo cliente é obrigatório.',
+            'responsible' => 'O campo responsável é obrigatório.',
+            'cpf_responsible.required' => 'O campo CPF do Responsável é obrigatório.',
         ];
     }
 }

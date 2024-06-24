@@ -12,9 +12,8 @@ class School extends Model
     protected $fillable = [
         'client_id',
         'name',
-        'education_level',
+        'regional',
         'responsible',
-        'cnpj',
         'cep',
         'address',
         'number',

@@ -47,9 +47,9 @@
                 </div>
 
                 <div class="row form-group pb-3">
-                    <x-form_components.input name="education_level" label="Nível de Educação" type_input="text"
-                        form_group_width="6" />
                     <x-form_components.input name="responsible_name" label="Nome do Responsável" type_input="text"
+                        form_group_width="6" />
+                    <x-form_components.input name="cpf_responsible" label="CPF do Responsável" type_input="text"
                         form_group_width="6" />
                 </div>
 

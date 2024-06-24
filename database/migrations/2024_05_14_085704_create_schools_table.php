@@ -14,9 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('client_id')->constrained();
             $table->string('name');
-            $table->string('education_level');
+            $table->string('regional');
             $table->string('responsible');
-            $table->string('cnpj');
             $table->string('cep');
             $table->string('address');
             $table->string('number');

@@ -24,15 +24,13 @@
                 </div>
 
                 <div class="row form-group pb-3">
-                    <x-form_components.input name="education_level" label="Nível de Ensino" type_input="text"
-                        form_group_width="6" value="{{ old('education_level', $school->education_level) }}" />
                     <x-form_components.input name="responsible" label="Responsável" type_input="text"
-                        form_group_width="6" value="{{ old('responsible', $school->responsible) }}" />
+                    form_group_width="6" value="{{ old('responsible', $school->responsible) }}" />
+                    <x-form_components.input name="regional" label="Regional" type_input="text"
+                        form_group_width="6" value="{{ old('regional', $school->regional) }}" />
                 </div>
 
                 <div class="row form-group pb-3">
-                    <x-form_components.input name="cnpj" label="CNPJ" type_input="text" form_group_width="6"
-                        value="{{ old('cnpj', $school->cnpj) }}" />
                     <x-form_components.input name="cep" label="CEP" type_input="text" form_group_width="6"
                         value="{{ old('cep', $school->cep) }}" />
                 </div>

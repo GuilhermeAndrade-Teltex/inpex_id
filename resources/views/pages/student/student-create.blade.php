@@ -12,6 +12,7 @@
                 data-validate-url="{{ route('student.validateRequest') }}" enctype="multipart/form-data">
                 @csrf
 
+                <x-app_components.spinner_loading loading="hide" />
                 <div class="row form-group pb-3">
                     <div class="col-lg-6">
                         <div class="form-group">
@@ -107,7 +108,7 @@
                 <div class="row justify-content-end">
                     <div class="col-lg-6">
                         <div class="text-end">
-                            <x-utils.btn tagHtml="button" type="submit" color="primary" text="Salvar" />
+                            <x-utils.btn tagHtml="button" type="submit" color="primary" text="Salvar" id="student-form" />
                             <x-utils.btn tagHtml="a" ref="{{ route('student.index') }}" color="default"
                                 text="Cancelar" />
                         </div>

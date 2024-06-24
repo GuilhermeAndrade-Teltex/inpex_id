@@ -48,13 +48,17 @@ class ImportExcel extends Command
         try {
             foreach ($rows as $index => $row) {
                 if ($index != 0) {
-                    // dd($row);
+                    
                     $this->info("Processando linha {$index}: " . implode(', ', $row));
 
                     // data de nascimento
                     $dateOfBirth = $row[4];
                     $dateTime = \DateTime::createFromFormat('d/m/Y', $dateOfBirth);
                     $formattedDateOfBirth = $dateTime->format('Y-m-d') . ' 00:00:00';
+
+                    // telefone do responsável
+                    $responsible_phone = $row[7];
+                    $responsible_phone = preg_replace('/[()\-\s]/', '', $responsible_phone);
 
                     // endereço do aluno
                     if ($row[5] != null) {
@@ -79,7 +83,7 @@ class ImportExcel extends Command
 
                     if (!School::where('name', $row[2])->exists()) {
                         $school = School::create([
-                            'client_id' => 1,
+                            'client_id' => 1, // Alterar quando houver mais clientes.
                             'name' => $row[2],
                             'regional' => $sheetName,
                             'city' => $row[1],
@@ -92,15 +96,8 @@ class ImportExcel extends Command
                         ]);
                     }
 
-                    $cpf_responsible = $row[8];
+                    // validação campo cpf do aluno
                     $cpf_student = $row[9];
-
-                    if (empty($cpf_responsible)) {
-                        $this->warn("CPF do responsável vazio na linha {$index}, ignorando registro.");
-                        fwrite($logHandle, "Linha {$index}: CPF do responsável vazio.\n");
-                        continue;
-                    }
-
                     if (empty($cpf_student)) {
                         $this->warn("CPF do aluno vazio na linha {$index}, ignorando registro.");
                         fwrite($logHandle, "Linha {$index}: CPF do aluno vazio.\n");
@@ -113,12 +110,12 @@ class ImportExcel extends Command
                         continue;
                     }
 
-
                     Student::create([
                         'school_id' => $school->id,
                         'name' => $row[3],
                         'cpf' => $row[9],
-                        'responsible' => $row[6],
+                        'responsible_name' => $row[6],
+                        'responsible_phone' => $responsible_phone,
                         'cpf_responsible' => $row[8],
                         'date_of_birth' => $formattedDateOfBirth,
                         'class' => $row[10],

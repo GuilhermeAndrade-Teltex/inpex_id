@@ -35,7 +35,7 @@ return [
     */
 
     'mailers' => [
-        'intranet' => [
+        'InpexID' => [
             'transport' => 'smtp',
             'host' => 'smtp.gmail.com',
             'port' => 465,
@@ -43,22 +43,22 @@ return [
             'username' => env('MAIL_USERNAME_1'),
             'password' => env('MAIL_PASSWORD_1'),
             'from' => [
-                'address' => 'intranet@teltex.com.br',
-                'name' => 'Teltex Tecnologia',
+                'address' => 'inpexid@inpex.com.br',
+                'name' => 'Inpex ID',
             ],
         ],
-        'gente_gestao' => [
-            'transport' => 'smtp',
-            'host' => 'smtp.gmail.com',
-            'port' => 465,
-            'encryption' => 'ssl',
-            'username' => env('MAIL_USERNAME_2'),
-            'password' => env('MAIL_PASSWORD_2'),
-            'from' => [
-                'address' => 'gente.gestao@teltex.com.br',
-                'name' => 'Gente Gestão',
-            ],
-        ],
+        // 'gente_gestao' => [
+        //     'transport' => 'smtp',
+        //     'host' => 'smtp.gmail.com',
+        //     'port' => 465,
+        //     'encryption' => 'ssl',
+        //     'username' => env('MAIL_USERNAME_2'),
+        //     'password' => env('MAIL_PASSWORD_2'),
+        //     'from' => [
+        //         'address' => 'gente.gestao@teltex.com.br',
+        //         'name' => 'Gente Gestão',
+        //     ],
+        // ],
 
         'ses' => [
             'transport' => 'ses',

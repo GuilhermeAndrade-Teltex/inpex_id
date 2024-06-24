@@ -96,7 +96,7 @@ class UserController extends Controller
         ]);
 
         SendToEmail::create([
-            'module_id' => null,
+            'module_id' => $user->id,
             'user_id' => $user->id,
             'send_to' => $user->email,
             'page_title' => 'Primeiro Acesso',
@@ -105,9 +105,9 @@ class UserController extends Controller
             'content_description' => "Olá {$user->name},<br><br>
                 Seu acesso a Intranet foi liberado. Seu nome de usuário é: <br><br><strong>{$user->email}</strong><br><br>
                 Você deve configurar sua senha através desse <a href='" . route('password.reset', $token) . "'>link</a>..",
-            'config_file' => 'intranet',
+            'config_file' => 'InpexID',
             'status' => 'NOT_SEND',
-            'module' => null,
+            'module' => 'user',
             'date_modified' => now(),
         ]);
 

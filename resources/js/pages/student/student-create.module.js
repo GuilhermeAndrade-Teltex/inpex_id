@@ -214,3 +214,7 @@ photo.addEventListener("change", (e) => {
     };
     reader.readAsDataURL(file);
 });
+
+$('#student-form').on('click', function() {
+    spinner_show();
+});

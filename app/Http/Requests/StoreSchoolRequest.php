@@ -24,16 +24,16 @@ class StoreSchoolRequest extends BasicRequest
         $rules = parent::rules();
 
         $rules['client_id'] = ['required'];
-        $rules['name'][] = 'required';
-        $rules['responsible'] = ['required'];
+        $rules['name'] = ['required'];
+        $rules['responsible'] = ['nullable'];
         $rules['regional'] = ['required'];
-        $rules["cep"] = ['required', 'formato_cep'];
-        $rules["address"] = ['required', 'max:255'];
-        $rules["number"] = ['required'];
+        $rules["cep"] = ['nullable', 'formato_cep'];
+        $rules["address"] = ['nullable', 'max:255'];
+        $rules["number"] = ['nullable'];
         $rules["complement"] = ['nullable', 'string', 'max:255'];
-        $rules["district"] = ['required', 'string', 'max:255'];
-        $rules["city"] = ['required', 'string', 'max:255'];
-        $rules["state"] = ['string'];
+        $rules["district"] = ['nullable', 'string', 'max:255'];
+        $rules["city"] = ['nullable', 'string', 'max:255'];
+        $rules["state"] = ['nullable', 'string'];
 
         return $rules;
     }

@@ -14,75 +14,43 @@
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/theme.css', 'resources/js/app.js', 'resources/js/theme.js', 'resources/js/custom.js'])
 </head>
 
-<body style="background: #123b67">
+<!-- TELA DE LOGIN 1 -->
+
+<body style="background-image: url('{{asset("images/logos/arte_ponto_1920.jpg")}}');">
     <!-- start: page -->
-    <section class="body-sign">
-        <div class="center-sign">
-            <div class="panel card-sign">
-                <div class="card-title-sign mt-3 mb-4 text-end" style="display: flex">
-                    <a href="#" class="logo float-start teltex-logo">
-                        <img src="{{ asset('images/logos/logo-white.png') }}" height="70" alt="Teltex" />
-                    </a>
+    <div class="content_body">
+        <input type="hidden" name="session" :status="session('status')">
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <div id="login_card">
+                <div id="image">
+                    <img src="{{ asset('images/logos/inpexid.svg') }}" id="logo_inpex">
                 </div>
-                <div class="card-body">
-                    <input type="hidden" name="session" :status="session('status')">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
-                        <div class="form-group mb-3">
-                            <label for="email" :value="__('Email')">E-mail</label>
-                            <div class="input-group">
-                                <input id="email" name="email" type="email" :value="old('email')"
-                                    class="form-control form-control-lg" required autofocus autocomplete="username" />
-                                <span class="input-group-text">
-                                    <i class="bx bx-user text-4"></i>
-                                </span>
-                            </div>
-                            @if ($errors->has('email'))
-                                <span class="mt-2">
-                                    @foreach ($errors->get('email') as $error)
-                                        {{ $error }}<br>
-                                    @endforeach
-                                </span>
-                            @endif
-                        </div>
-                        <div class="form-group mb-3">
-                            <div class="clearfix">
-                                <label class="float-start" for="password" :value="__('Password')">Senha</label>
-                                @if (Route::has('password.request'))
-                                    <a href="{{ route('password.request') }}" class="float-end">Esqueci minha senha</a>
-                                @endif
-                            </div>
-                            <div class="input-group">
-                                <input id="password" class="form-control form-control-lg" type="password"
-                                    name="password" required autocomplete="current-password" />
-                                <span class="input-group-text">
-                                    <i class="bx bx-lock text-4"></i>
-                                </span>
-                            </div>
-                            @if ($errors->has('password'))
-                                <span class="mt-2">
-                                    @foreach ($errors->get('password') as $error)
-                                        {{ $error }}<br>
-                                    @endforeach
-                                </span>
-                            @endif
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <div class="checkbox-custom checkbox-default">
-                                    <input id="RememberMe" name="remember" type="checkbox" />
-                                    <label for="RememberMe">Remember Me</label>
-                                </div>
-                            </div>
-                            <div class="col-sm-4 text-end">
-                                <button type="submit" class="btn btn-primary mt-2">Entrar</button>
-                            </div>
-                        </div>
-                    </form>
+                <div id="input_login">
+                    <input id="email" name="email" type="email" :value="old('email')"
+                        class="form-control form-control-lg" required autofocus autocomplete="username"
+                        placeholder="E-mail">
+                    @if ($errors->has('email'))
+                        <span>
+                            @foreach ($errors->get('email') as $error)
+                                {{ $error }}
+                            @endforeach
+                        </span>
+                    @endif
+                    <input id="password" class="form-control form-control-lg" type="password" name="password" required
+                        autocomplete="current-password" placeholder="Senha">
+                    @if ($errors->has('password'))
+                        <span>
+                            @foreach ($errors->get('password') as $error)
+                                {{ $error }}
+                            @endforeach
+                        </span>
+                    @endif
+                    <button class="btn btn-primary inputs" id="btn_login"> LOGIN </button>
                 </div>
             </div>
-        </div>
-    </section>
+        </form>
+    </div>
     <!-- end: page -->
 
     <!-- Vendor -->

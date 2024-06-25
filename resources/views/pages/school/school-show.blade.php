@@ -21,10 +21,9 @@
                         </div>
                     </div>
                     <div class="form-group row pb-4">
-                        <label class="col-lg-4 control-label text-lg-end pt-1" for="education_level">Nível de
-                            Ensino:</label>
+                        <label class="col-lg-4 control-label text-lg-end pt-1" for="education_level">Regional:</label>
                         <div class="col-lg-8">
-                            <p class="form-control-static mb-0">{{ $school->education_level }}</p>
+                            <p class="form-control-static mb-0">{{ $school->regional }}</p>
                         </div>
                     </div>
                     <div class="form-group row pb-4">
@@ -36,12 +35,6 @@
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="form-group row pb-4">
-                        <label class="col-lg-4 control-label text-lg-end pt-1" for="cnpj">CNPJ:</label>
-                        <div class="col-lg-8">
-                            <p class="form-control-static mb-0">{{ $school->cnpj }}</p>
-                        </div>
-                    </div>
                     <div class="form-group row pb-4">
                         <label class="col-lg-4 control-label text-lg-end pt-1" for="cep">CEP:</label>
                         <div class="col-lg-8">
@@ -98,8 +91,8 @@
             <div class="row form-group pb-3">
                 <div class="col-lg-12">
                     <div class="form-group row pb-4">
-                        <label class="col-lg-4 control-label text-lg-end pt-1" for="observations">Observações:</label>
-                        <div class="col-lg-8">
+                        <label class="col-lg-2 control-label text-lg-end pt-1" for="observations">Observações:</label>
+                        <div class="col-lg-10">
                             <p class="form-control-static mb-0">{{ $school->observations }}</p>
                         </div>
                     </div>

@@ -31,7 +31,7 @@
                             <th>ID</th>
                             <th>Data de Criação</th>
                             <th>Nome</th>
-                            <th>CNPJ</th>
+                            <th>Regional</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -40,16 +40,17 @@
                             <tr>
                                 <td>{{ $school->id }}</td>
                                 <td>{{ \Carbon\Carbon::parse($school->created_at)->format('d/m/Y') }}</td>
-                                <td>{{ $school->name }}</td>
                                 <td><a class="link"
-                                        href="{{ route('school.show', ['id' => $school->id]) }}">{{ $school->cnpj }}</a>
+                                        href="{{ route('school.show', ['id' => $school->id]) }}">{{ $school->name }}</a>
                                 </td>
+                                <td>{{ $school->regional }}</td>
                                 <td>
                                     <a href="{{ route('school.show', $school->id) }}" class="btn btn-sm btn-dark"><i
                                             class="fa fa-eye"></i></a>
                                     <a href="{{ route('school.edit', $school->id) }}" class="btn btn-sm btn-dark"><i
                                             class="fa fa-pencil"></i></a>
-                                    <a class="btn btn-sm btn-dark" id="remove-item" data-school_id="{{$school->id}}"><i class="fa fa-trash"></i></a>
+                                    <a class="btn btn-sm btn-dark" id="remove-item" data-school_id="{{$school->id}}"><i
+                                            class="fa fa-trash"></i></a>
                                 </td>
                             </tr>
                         @endforeach

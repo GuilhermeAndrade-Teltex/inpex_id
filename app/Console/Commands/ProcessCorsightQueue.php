@@ -44,34 +44,34 @@ class ProcessCorsightQueue extends Command
                         $school->save();
                     } else {
                         $record->status = 'ERROR';
-                        $record->log = $e->getMessage();
-                        Log::error('Error processing record', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+                        $record->log = $response->getMessage();
+                        Log::error('Error processing record', ['exception' => $response->getMessage()]);
                     }
                 } elseif ($record->endpoint === 'addPerson') {
                     $response = $this->corsightApiService->addPerson($data);
                     $student = Student::findOrFail($record->module_id);
-                    if ($response['metadata']['success_list'][0]['success'] != false) {
+                    if ($response['metadata']['success_list']['0']['success'] = true) {
                         $record->status = 'SEND';
-                        $record->log = json_encode(['message' => 'Person created with successful', 'response' => $response['metadata']['success_list'][0]['msg']]);
+                        $record->log = json_encode(['message' => 'Person added successfully', 'response' => $response['metadata']['success_list']['0']['msg']]);
 
-                        $student->faces_id = json_encode($response['metadata']['success_list'][0]['msg']);
+                        $student->faces_id = $response['data']['pois']['0']['poi_id'];
                         $student->save();
                     } else {
                         $record->status = 'ERROR';
-                        $record->log = json_encode(['response' => $response['metadata']['success_list'][0]['msg']]);
+                        $record->log = json_encode(['response' => $response->getMessage()]);
                     }
                 } elseif ($record->endpoint === 'addFaces') {
                     $response = $this->corsightApiService->addFaces($data);
                     $student = Student::findOrFail($record->module_id);
-                    if ($response['metadata']['success_list'][0]['success'] != false) {
+                    if ($response->successful()) {
                         $record->status = 'SEND';
-                        $record->log = json_encode(['message' => 'Person created with successful', 'response' => $response['metadata']['success_list'][0]['msg']]);
+                        $record->log = json_encode(['message' => 'Faces added successfully', 'response' => $response->body()]);
 
-                        $student->faces_id = json_encode($response['metadata']['success_list'][0]['msg']);
+                        $student->faces_id = $response->body();
                         $student->save();
                     } else {
                         $record->status = 'ERROR';
-                        $record->log = json_encode(['response' => $response['metadata']['success_list'][0]['msg']]);
+                        $record->log = json_encode(['response' => $response->getMessage()]);
                     }
                 }
             } catch (\Exception $e) {
@@ -83,7 +83,7 @@ class ProcessCorsightQueue extends Command
             $record->updated_at = now();
             $record->save();
 
-            sleep(10);
+            sleep(5);
         }
     }
 }

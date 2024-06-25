@@ -240,15 +240,15 @@ class StudentController extends Controller
                 'pois' => [
                     [
                         'display_name' => $student->name,
-                        'display_img' => $base64Image,
+                        'display_img' => $imageId,
                         'poi_notes' => [
-                            'free_notes' => 'CPF: ' . $student->cpf . ' | Observações: ' . $student->observations . ' | Notes: This person was created through Intranet integration at ' . now()->format('d/m/Y - H:i:s') . '.',
+                            'free_notes' => 'CPF: ' . $student->cpf . ' | Observações: ' . $student->observations . ' | Notes: This person was created through InpexID integration at ' . now()->format('d/m/Y - H:i:s') . '.',
                         ],
                         'poi_watchlists' => [$watchlistId],
                         'poi_id' => $student->cpf,
                         'face' => [
                             'image_payload' => [
-                                'img' => $base64Image,
+                                'img' => $imageId,
                                 'detect' => true,
                                 'use_detector_lms' => true,
                                 'fail_on_multiple_faces' => true
@@ -281,7 +281,7 @@ class StudentController extends Controller
             $data['faces'] = array(
                 array(
                     'image_payload' => array(
-                        "img" => $base64Image,
+                        "img" => $imageId,
                         "detect" => true,
                         "use_detector_lms" => true,
                         "fail_on_multiple_faces" => true

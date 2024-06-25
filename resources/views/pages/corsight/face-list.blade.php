@@ -1,3 +1,5 @@
+@vite(['resources/js/pages/corsight/face-list.module.js'])
+
 @extends('layouts.app')
 
 @section('main')

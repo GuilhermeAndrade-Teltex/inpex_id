@@ -20,11 +20,12 @@ export default defineConfig({
                 'resources/js/pages/student/student-edit.module.js',
                 'resources/js/pages/student/student-list.module.js',
                 'resources/js/pages/student/student-create.module.js',
+                'resources/js/pages/corsight/face-list.module.js',
                 'resources/js/components/app_components/spinner_loading.module.js',
                 'resources/js/components/utils/modal.module.js',
                 'resources/css/components/utils/btn.css',
                 'resources/css/dropzone/dropzone-amd-module.js',
-                'resources/js/studentUpload-create.js'
+                'resources/js/studentUpload-create.js',
             ],
             refresh: true,
         }),

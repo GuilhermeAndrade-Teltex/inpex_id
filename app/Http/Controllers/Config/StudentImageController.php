@@ -235,22 +235,19 @@ class StudentImageController extends Controller
         $imageId = $image->id;
         $watchlistId = $student->school->watchlist_id;
 
-        $imageContent = Storage::get($path);
-        $base64Image = base64_encode($imageContent);
-
         $data = [
             'pois' => [
                 [
                     'display_name' => $student->name,
-                    'display_img' => $base64Image,
+                    'display_img' => $imageId,
                     'poi_notes' => [
-                        'free_notes' => 'CPF: ' . $student->cpf . ' | Observações: ' . $student->observations . ' | Notes: This person was created through Intranet integration at ' . now()->format('d/m/Y - H:i:s') . '.',
+                        'free_notes' => 'CPF: ' . $student->cpf . ' | Observações: ' . $student->observations . ' | Notes: This person was created through InpexID integration at ' . now()->format('d/m/Y - H:i:s') . '.',
                     ],
                     'poi_watchlists' => [$watchlistId],
                     'poi_id' => $student->cpf,
                     'face' => [
                         'image_payload' => [
-                            'img' => $base64Image,
+                            'img' => $imageId,
                             'detect' => true,
                             'use_detector_lms' => true,
                             'fail_on_multiple_faces' => true

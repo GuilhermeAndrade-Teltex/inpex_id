@@ -9,6 +9,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Config as AppConfig;
 use App\Models\CorsightReads;
+use App\Models\Image;
 
 class CorsightApiService
 {
@@ -270,6 +271,17 @@ class CorsightApiService
     public function addPerson(array $data)
     {
         try {
+            $displayimg = $data['pois'][0]['display_img'];
+            $image = Image::where('id', $displayimg)->first();
+
+            $relativePath = 'public/' . $image->path_original;
+
+            $imageContent = Storage::get($relativePath);
+    
+            $image64 = base64_encode($imageContent);
+            $data['pois'][0]['display_img'] = $image64;
+            $data['pois'][0]['face']['image_payload']['img'] = $image64;
+
             $token = $this->getToken();
             $response = Http::withToken($token)->withOptions($this->httpOptions)->post("{$this->baseUri}" . self::POI_URL, $data);
 

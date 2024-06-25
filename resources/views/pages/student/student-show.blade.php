@@ -56,10 +56,9 @@
                         </div>
                     </div>
                     <div class="form-group row pb-4">
-                        <label class="col-lg-4 control-label text-lg-end pt-1" for="education_level">Nível de
-                            Educação:</label>
+                        <label class="col-lg-4 control-label text-lg-end pt-1" for="cpf_responsible">CPF do Responsável:</label>
                         <div class="col-lg-8">
-                            <p class="form-control-static mb-0">{{ $student->education_level }}</p>
+                            <p class="form-control-static mb-0">{{ $student->cpf_responsible }}</p>
                         </div>
                     </div>
                 </div>

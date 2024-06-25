@@ -54,7 +54,13 @@ class ImportExcel extends Command
                     // data de nascimento
                     $dateOfBirth = $row[4];
                     $dateTime = \DateTime::createFromFormat('d/m/Y', $dateOfBirth);
+                    if ($dateTime) {
                     $formattedDateOfBirth = $dateTime->format('Y-m-d') . ' 00:00:00';
+                    } else {
+                        $this->warn("Formatação da data de nascimento incorreta {$index}, ignorando registro.");
+                        fwrite($logHandle, "Linha {$index}: Data de nascimento do aluno incorreta.\n");
+                        continue;
+                    }
 
                     // telefone do responsável
                     $responsible_phone = $row[7];

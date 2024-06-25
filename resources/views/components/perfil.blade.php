@@ -18,7 +18,7 @@
                 {{-- <a role="menuitem" tabindex="-1" href="{{ route('user.profile') }}"><i
                         class="bx bx-user-circle"></i>
                     Meu Perfil</a> --}}
-                <a role="menuitem" tabindex="-1" href="{{route('profile.show')}}"><i class="bx bx-user-circle"></i>
+                <a role="menuitem" tabindex="-1" href="{{ route('profile.show') }}"><i class="bx bx-user-circle"></i>
                     Meu Perfil</a>
             </li>
             <li>

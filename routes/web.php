@@ -19,6 +19,8 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class])->group(function (
     })->name('dashboard');
 
     Route::get('perfil/' . Auth::user(), [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('perfil/' . Auth::user(), [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/perfil/validate-request', [ProfileController::class, 'validateProfileRequest'])->name('profile.validateRequest');
     Route::post('/logout', [ProfileController::class, 'logout'])->name('profile.logout');
 
     // User

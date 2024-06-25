@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+use App\Models\UsersRole;
 use App\Services\BreadcrumbService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
@@ -22,6 +27,14 @@ class ProfileController extends Controller
 
     public function show() {
         $user = Auth::user();
+        $created_by = User::find($user->created_by);
+        $user->created_by = $created_by->name;
+        $modified_by = User::find($user->modified_by);
+        $user->modified_by = $modified_by->name;
+        $user->date_created = Carbon::parse($user->date_created)->format('d/m/Y');
+        $user->date_modified = Carbon::parse($user->date_modified)->format('d/m/Y');
+        $user->cpf = preg_replace("/^(\d{3})(\d{3})(\d{3})(\d{2})$/", "$1.$2.$3-$4", $user->cpf);
+        $role = UsersRole::find($user->role_id);
 
         $breadcrumbsItems = [
             'Home' => 'dashboard',
@@ -31,7 +44,7 @@ class ProfileController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Meu Perfil';
 
-        return view('profile.profile', compact('user','breadcrumbs','pageTitle'));
+        return view('profile.profile', compact('user', 'role','breadcrumbs','pageTitle'));
     }
     /**
      * Display the user's profile form.
@@ -46,17 +59,29 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request)
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        $token = Str::random(60);
+        $expiresIn = now()->addHours(24)->getTimestamp();
+
+        $user->passwordResets()->create([
+            'user_id' => $user->id,
+            'date_created' => now(),
+            'date_modified' => now(),
+            'modified_by' => Auth::user()->id,
+            'status' => 'ACTIVE',
+            'expires_in' => $expiresIn,
+            'token' => $token,
+        ]);
+        $validatedData = $request->validated();
+        $user->update($validatedData);
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        Auth::logout();
+        return Redirect::to('/login');
     }
 
     /**
@@ -85,5 +110,16 @@ class ProfileController extends Controller
         Auth::logout();
 
         return response()->json(['status' => 'SUCCESS']);
+    }
+
+    public function validateProfileRequest(ProfileUpdateRequest $request)
+    {
+        $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->toArray()], 422);
+        }
+
+        return response()->json(['success' => true], 200);
     }
 }

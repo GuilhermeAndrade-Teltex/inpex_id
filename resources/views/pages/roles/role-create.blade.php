@@ -25,6 +25,4 @@
         </x-utils.container>
     </div>
 </section>
-</div>
-</section>
 @endsection

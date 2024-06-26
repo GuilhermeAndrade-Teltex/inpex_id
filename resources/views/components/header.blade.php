@@ -2,7 +2,7 @@
 <header class="header">
     <div class="logo-container">
         <a href="{{ route('dashboard') }}" class="logo">
-            <img src="{{ asset('images/logos/logo-wide.jpg') }}" width="120" height="45" alt="Teltex Tecnologia" />
+            <img src="{{ asset('images/logos/inpexid.svg') }}" style="padding-bottom: 10px" width="120" height="45" alt="Teltex Tecnologia" />
         </a>
         <div class="d-md-none toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html"
             data-fire-event="sidebar-left-opened">

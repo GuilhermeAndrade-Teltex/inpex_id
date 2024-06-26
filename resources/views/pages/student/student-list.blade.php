@@ -2,7 +2,6 @@
 
 @extends('layouts.app')
 @section('main')
-
 <section role="main" class="content-body">
     @include('components.breadcrumbs')
     <div class="col-lg-12">
@@ -12,7 +11,6 @@
                     <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
                     <a href="#" class="card-action card-action-dismiss" data-card-dismiss></a>
                 </div>
-
                 <h2 class="card-title">Alunos</h2>
             </header>
             <div class="card-body">
@@ -31,38 +29,21 @@
                     <x-utils.btn tagHtml="a" color="dark" text="Histórico" icon="history" size="sm" /> -->
                 </div>
 
-                <table class="table table-bordered table-striped mb-0" id="datatable-tabletools">
+                <table id="datatable-tabletools" class="table" data-url="{{ route('student.index') }}">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Data de Criação</th>
-                            <th>Nome</th>
-                            <th>CPF</th>
-                            <th>Ações</th>
+                            <th style="width: 10%;">ID</th>
+                            <th style="width: 25%;">Data de Criação</th>
+                            <th style="width: 35%;">Nome</th>
+                            <th style="width: 30%;">CPF</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($students as $student)
-                            <tr>
-                                <td>{{ $student->id }}</td>
-                                <td>{{ \Carbon\Carbon::parse($student->created_at)->format('d/m/Y') }}</td>
-                                <td>{{ $student->name }}</td>
-                                <td><a class="link"
-                                        href="{{ route('student.show', ['id' => $student->id]) }}">{{ $student->cpf }}</a>
-                                </td>
-                                <td>
-                                    <a href="{{ route('student.show', $student->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-eye"></i></a>
-                                    <a href="{{ route('student.edit', $student->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-pencil"></i></a>
-                                    <a href="" class="btn btn-sm btn-dark" id="remove-student" data-student_id="{{$student->id}}"><i class="fa fa-trash"></i></a>
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
         </section>
     </div>
 </section>
+
 @endsection

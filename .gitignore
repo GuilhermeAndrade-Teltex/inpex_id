@@ -1,4 +1,8 @@
+# PHP
 /.phpunit.cache
+.phpunit.result.cache
+
+# Laravel specific
 /node_modules
 /public/build
 /public/hot
@@ -8,12 +12,24 @@
 .env
 .env.backup
 .env.production
-.phpunit.result.cache
+
+# Laravel storage exceptions
+/storage/**
+!/storage/app/
+!/storage/app/public/
+!/storage/app/public/excel_students/
+!/storage/app/public/excel_students/**
+
+# Development environment files
 Homestead.json
 Homestead.yaml
 auth.json
+
+# Logs
 npm-debug.log
 yarn-error.log
+
+# IDE - Ignore all settings files
 /.fleet
 /.idea
 /.vscode

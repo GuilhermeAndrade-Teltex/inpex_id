@@ -39,21 +39,44 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->accessLogService->logAccess("Alunos");
 
-        $students = Student::all();
+        $columns = ['id', 'created_at', 'name', 'cpf'];
 
-        $breadcrumbsItems = [
-            'Home' => 'dashboard',
-            'Alunos' => 'student.index',
-        ];
+        if ($request->ajax()) {
+            $length = $request->input('length', 10);
+            $start = $request->input('start', 0);
+            $orderIndex = $request->input('order.0.column');
+            $order = $columns[$orderIndex] ?? 'id';
+            $dir = $request->input('order.0.dir') ?? 'asc';
 
-        $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
-        $pageTitle = 'Lista de Alunos';
+            $query = Student::select('id', 'created_at', 'name', 'cpf');
 
-        return view('pages.student.student-list', compact('students', 'breadcrumbs', 'pageTitle'));
+            if ($search = $request->input('search.value')) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('cpf', 'like', "%{$search}%");
+                });
+            }
+
+            $totalFiltered = $query->count();
+            $data = $query->orderBy($order, $dir)
+                ->offset($start)
+                ->limit($length)
+                ->get();
+            $totalData = Student::count();
+
+            return response()->json([
+                "draw" => intval($request->input('draw')),
+                "recordsTotal" => intval($totalData),
+                "recordsFiltered" => intval($totalFiltered),
+                "data" => $data
+            ]);
+        }
+
+        return view('pages.student.student-list');
     }
 
     /**

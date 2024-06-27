@@ -86,7 +86,7 @@ class CorsightController extends Controller
     public function getFacesData()
     {
         // Limitar a quantidade de faces retornadas
-        $faces = CorsightReads::orderBy('created_at', 'desc')->take(50)->get();
+        $faces = CorsightReads::orderBy('id', 'desc')->take(50)->get();
         return response()->json($faces);
     }
 
@@ -138,5 +138,10 @@ class CorsightController extends Controller
         } else {
             return '70+';
         }
+    }
+
+    private function convertTimestamp($timestamp)
+    {
+        return Carbon::createFromTimestamp($timestamp)->toDateTimeString();
     }
 }

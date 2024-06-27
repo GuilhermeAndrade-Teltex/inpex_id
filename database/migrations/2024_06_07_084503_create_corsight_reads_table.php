@@ -49,7 +49,7 @@ class CreateCorsightReadsTable extends Migration
             $table->longText('face_crop_img')->nullable();
             $table->string('poi_display_name')->nullable();
             $table->json('watchlists');
-            $table->json('poi_notes');
+            $table->json('poi_notes')->nullable();
             $table->timestamp('utc_time_matched')->nullable();
             $table->string('poi_id')->nullable();
             $table->float('poi_confidence')->nullable();

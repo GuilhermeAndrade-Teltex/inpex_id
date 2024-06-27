@@ -103,14 +103,10 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::
     // Corsight
     Route::get('/corsight/watchlists', [CorsightController::class, 'listWatchlist'])->name('corsight.watchlist');
     Route::get('/corsight/pessoas', [CorsightController::class, 'listFaces'])->name('corsight.faces');
-    // Route::get('/corsight/faces-data', [CorsightController::class, 'getFacesData']);
+    Route::get('/corsight/faces-data', [CorsightController::class, 'getFacesData']);
 });
 
-Route::middleware([EventsMiddleware::class, 'throttle:60,1'])->group(function () {
-    Route::post('/corsight/eventos', function () {
-    });
-});
-
+// Corsight Events
 Route::get('/corsight/powerbi-data', [CorsightController::class, 'getPowerBIData'])->name('corsight.powerbiData');
 
 require __DIR__ . '/auth.php';

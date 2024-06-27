@@ -32,7 +32,7 @@ class UpdateStudentRequest extends BasicRequest
         $rules['enrollment'] = ['required', 'string', 'max:255'];
         $rules['grade'] = ['required', 'string', 'max:255'];
         $rules['class'] = ['required', 'string', 'max:255'];
-        $rules['education_level'] = ['required', 'string', 'max:255'];
+        $rules['cpf_responsible'] = ['nullable', 'digits:11'];
         $rules['responsible_name'] = ['required', 'string', 'max:255'];
         $rules['responsible_phone'] = ['required', 'string', 'max:255'];
         $rules['responsible_email'] = ['required', 'email', 'max:255'];

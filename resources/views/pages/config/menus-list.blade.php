@@ -29,16 +29,16 @@
                                     @if(isset($allowedActions) && isset($allowedMenus[$menu1->id]))
                                         @if(in_array($menu1->id, array_column($allowedMenus[$menu1->id], 'id')))
                                             @if($allowedActions['show'])
-                                                <a href="{{ route('menus.show', $menu1->id) }}" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></a>
+                                                <a href="{{ route('menus.show', $menu1->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
                                             @endif
                                             @if($allowedActions['edit'])
-                                                <a href="{{ route('menus.edit', $menu1->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
+                                                <a href="{{ route('menus.edit', $menu1->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-pencil"></i></a>
                                             @endif
                                             @if($allowedActions['destroy'])
                                                 <form action="{{ route('menus.destroy', $menu1->id) }}" method="POST" style="display: inline-block;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                                    <button type="submit" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i></button>
                                                 </form>
                                             @endif
                                         @endif
@@ -56,16 +56,16 @@
                                             @if(isset($allowedActions) && isset($allowedMenus[$menu1->id]['submenus'][$menu2->id]))
                                                 @if(in_array($menu2->id, array_column($allowedMenus[$menu1->id]['submenus'][$menu2->id], 'id')))
                                                     @if($allowedActions['show'])
-                                                        <a href="{{ route('submenus.show', $menu2->id) }}" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></a>
+                                                        <a href="{{ route('submenus.show', $menu2->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
                                                     @endif
                                                     @if($allowedActions['edit'])
-                                                        <a href="{{ route('submenus.edit', $menu2->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
+                                                        <a href="{{ route('submenus.edit', $menu2->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-pencil"></i></a>
                                                     @endif
                                                     @if($allowedActions['destroy'])
                                                         <form action="{{ route('submenus.destroy', $menu2->id) }}" method="POST" style="display: inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                                            <button type="submit" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i></button>
                                                         </form>
                                                     @endif
                                                 @endif
@@ -83,16 +83,16 @@
                                                     @if(isset($allowedActions) && isset($allowedMenus[$menu1->id]['submenus'][$menu2->id]['submenus'][$menu3->id]))
                                                         @if(in_array($menu3->id, array_column($allowedMenus[$menu1->id]['submenus'][$menu2->id]['submenus'], 'id')))
                                                             @if($allowedActions['show'])
-                                                                <a href="{{ route('subsubmenus.show', $menu3->id) }}" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></a>
+                                                                <a href="{{ route('subsubmenus.show', $menu3->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
                                                             @endif
                                                             @if($allowedActions['edit'])
-                                                                <a href="{{ route('subsubmenus.edit', $menu3->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
+                                                                <a href="{{ route('subsubmenus.edit', $menu3->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-pencil"></i></a>
                                                             @endif
                                                             @if($allowedActions['destroy'])
                                                                 <form action="{{ route('subsubmenus.destroy', $menu3->id) }}" method="POST" style="display: inline-block;">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                                                    <button type="submit" class="btn btn-sm btn-dark"><i class="fa fa-trash"></i></button>
                                                                 </form>
                                                             @endif
                                                         @endif

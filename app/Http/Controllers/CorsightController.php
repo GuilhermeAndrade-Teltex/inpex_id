@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CorsightApiService;
+use App\Services\AccessLogService;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
 use App\Models\CorsightReads;
@@ -14,12 +15,14 @@ use Carbon\Carbon;
 class CorsightController extends Controller
 {
     protected $corsightApiService;
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
     protected $latestAppearanceData = [];
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService, CorsightApiService $corsightApiService)
+    public function __construct(AccessLogService $accessLogService, ValidationService $validationService, BreadcrumbService $breadcrumbService, CorsightApiService $corsightApiService)
     {
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
         $this->corsightApiService = $corsightApiService;
@@ -43,6 +46,8 @@ class CorsightController extends Controller
 
     public function listWatchlist()
     {
+        $this->accessLogService->logAccess("Corsight - Lista de Pessoas");
+
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Watchlists' => 'corsight.watchlist',

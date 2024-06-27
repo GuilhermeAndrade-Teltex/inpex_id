@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\AccessLogService;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
 use App\Http\Middleware\MenuMiddleware;
@@ -14,11 +15,13 @@ use App\Models\Menus3;
 
 class MenuController extends Controller
 {
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
         $this->middleware(MenuMiddleware::class);
@@ -29,6 +32,8 @@ class MenuController extends Controller
      */
     public function index()
     {
+        $this->accessLogService->logAccess("Lista de Menus");
+
         $menus1 = Menus1::with([
             'menus2' => function ($query) {
                 $query->orderBy('name');
@@ -132,6 +137,7 @@ class MenuController extends Controller
      */
     public function edit(Menus1 $menu1)
     {
+        $this->accessLogService->logAccess("Editar Menu: id: {$menu1->id}");
         $menu1->load('menus2.menus3'); // Eager loading para otimizar as consultas
         return view('pages.config.menus-edit', compact('menu1'));
     }

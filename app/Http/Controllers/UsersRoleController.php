@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\UsersRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Services\AccessLogService;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
 
 class UsersRoleController extends Controller
 {
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
     }
@@ -24,6 +27,8 @@ class UsersRoleController extends Controller
      */
     public function index()
     {
+        $this->accessLogService->logAccess("Perfis de Usuário");
+
         $roles = UsersRole::all();
 
         $breadcrumbsItems = [
@@ -42,6 +47,8 @@ class UsersRoleController extends Controller
      */
     public function create()
     {
+        $this->accessLogService->logAccess("Inserir perfil");
+
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Perfis de Usuário' => 'roles.index',
@@ -72,6 +79,7 @@ class UsersRoleController extends Controller
      */
     public function show(UsersRole $usersRole)
     {
+        $this->accessLogService->logAccess("Detalhes do Perfil - id: {$usersRole->id}");
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Perfis de Usuário' => 'roles.index',
@@ -88,6 +96,7 @@ class UsersRoleController extends Controller
      */
     public function edit(string $id)
     {
+        $this->accessLogService->logAccess("Editar Perfil / id: {$id}");
         $role = UsersRole::findOrFail($id);
 
         $breadcrumbsItems = [

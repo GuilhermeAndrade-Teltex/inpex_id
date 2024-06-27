@@ -6,7 +6,9 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\UsersRole;
+use App\Services\AccessLogService;
 use App\Services\BreadcrumbService;
+use App\Services\ValidationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,14 +20,20 @@ use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
+    protected $accessLogService;
     protected $breadcrumbService;
+    protected $validationService;
 
-    public function __construct(BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, BreadcrumbService $breadcrumbService, ValidationService $validationService)
     {
+        $this->accessLogService = $accessLogService;
         $this->breadcrumbService = $breadcrumbService;
+        $this->validationService = $validationService;
     }
 
     public function show() {
+        $this->accessLogService->logAccess("Meu perfil");
+
         $user = Auth::user();
         $created_by = User::find($user->created_by);
         $user->created_by = $created_by->name;

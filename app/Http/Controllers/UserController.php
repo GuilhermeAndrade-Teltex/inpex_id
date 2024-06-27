@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
+use App\Services\AccessLogService;
 use App\Http\Requests\BasicRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\UsersRole;
@@ -16,11 +17,13 @@ use App\Models\SendToEmail;
 
 class UserController extends Controller
 {
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
     }
@@ -30,6 +33,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->accessLogService->logAccess("Usuários");
         $users = User::all();
 
         $breadcrumbsItems = [
@@ -48,6 +52,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        $this->accessLogService->logAccess("Usuário - Inserir");
         $roles = UsersRole::all();
 
         $breadcrumbsItems = [
@@ -119,6 +124,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
+        $this->accessLogService->logAccess("Usuário - Visualizar / id: {$id}");
         $user = User::with('role')->findOrFail($id);
 
         $breadcrumbsItems = [
@@ -137,6 +143,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
+        $this->accessLogService->logAccess("Usuário - Editar / id: {$id}");
         $user = User::findOrFail($id);
         $roles = UsersRole::all();
 

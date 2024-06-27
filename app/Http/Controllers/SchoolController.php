@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Services\ValidationService;
+use App\Services\AuditService;
 use App\Services\BreadcrumbService;
+use App\Services\AccessLogService;
 use App\Models\School;
 use App\Models\Client;
 use App\Models\CorsightQueue;
@@ -13,11 +15,15 @@ use App\Http\Requests\UpdateSchoolRequest;
 
 class SchoolController extends Controller
 {
+    protected $auditService;
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AuditService $auditService, AccessLogService $accessLogService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->auditService = $auditService;
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
     }
@@ -27,6 +33,8 @@ class SchoolController extends Controller
      */
     public function index()
     {
+        $this->accessLogService->logAccess("Escolas");
+
         $schools = School::all();
 
         $breadcrumbsItems = [
@@ -45,6 +53,7 @@ class SchoolController extends Controller
      */
     public function create()
     {
+        $this->accessLogService->logAccess("Escolas - Inserir");
         $clients = Client::all();
 
         $breadcrumbsItems = [
@@ -71,6 +80,9 @@ class SchoolController extends Controller
         $schoolId = str_pad($school->id, 6, '0', STR_PAD_LEFT);
         $schoolName = $schoolId . '_' . $school->name;
         $slug = Str::slug($schoolName, '_');
+
+        $data = ' inseriu uma nova escola.';
+        $this->auditService->insertLog($school->id, 'school', $data);
 
         // Dados para a chamada da API
         $data = [
@@ -100,6 +112,7 @@ class SchoolController extends Controller
      */
     public function show(string $id)
     {
+        $this->accessLogService->logAccess("Escola - Visualizar / id: {$id}");
         $school = School::findOrFail($id);
 
         $breadcrumbsItems = [
@@ -118,6 +131,7 @@ class SchoolController extends Controller
      */
     public function edit(string $id)
     {
+        $this->accessLogService->logAccess("Escola - Editar / id: {$id}");
         $clients = Client::all();
         $school = School::findOrFail($id);
 
@@ -135,10 +149,16 @@ class SchoolController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSchoolRequest $request, School $school)
+    public function update(UpdateSchoolRequest $request, $id)
     {
         $validatedData = $request->validated();
+        $school_old = School::findOrFail($id);
+        $school_old = $school_old->attributesToArray();
+        
+        $school = School::findOrFail($id);
+
         $school->update($validatedData);
+        $this ->auditService->editLog($id, 'school', $school_old, $validatedData);
 
         return redirect()->route('school.index')->with('success', 'Escola atualizada com sucesso!');
     }
@@ -150,6 +170,7 @@ class SchoolController extends Controller
     {
         try {
             $school = School::findOrFail($id);
+            $this->auditService->destroyLog($id, 'school', " deletou a escola $school->name.");
             $school->delete();
             return response()->json(['success', 'Escola removida com sucesso!', 200]);
         } catch (\Exception $e) {

@@ -42,6 +42,7 @@ class BasicRequest extends FormRequest
         return [
             'name.required' => 'O campo nome é obrigatório.',
             'name.string' => 'Nome não deve ser somente numérico',
+            'fullname.required' => 'O campo nome completo é obrigatório.',
 
             'email.required' => 'O campo email é obrigatório.',
             'email.email' => 'Informe um email válido.',
@@ -124,6 +125,8 @@ class BasicRequest extends FormRequest
             'client_id' => 'O campo cliente é obrigatório.',
             'responsible' => 'O campo responsável é obrigatório.',
             'cpf_responsible.required' => 'O campo CPF do Responsável é obrigatório.',
+
+            'password.required' => 'O campo senha é obrigatório.',
         ];
     }
 }

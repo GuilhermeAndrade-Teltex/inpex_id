@@ -64,6 +64,7 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::
     Route::delete('/alunos/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
     Route::post('/alunos/validate-request', [StudentController::class, 'validateStudentRequest'])->name('student.validateRequest');
     Route::post('/alunos/{student}/upload-photo', [StudentController::class, 'uploadPhoto'])->name('student.uploadPhoto');
+    Route::get('/alunos/teste', [StudentController::class, 'listStudent'])->name('student.listStudent');
 
     // StudentImages
     Route::get('/upload-image/inserir', [StudentImageController::class, 'create'])->name('studentImage.create');

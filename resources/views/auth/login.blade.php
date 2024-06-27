@@ -10,6 +10,8 @@
     <!-- Web Fonts  -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800|Shadows+Into+Light"
         rel="stylesheet" type="text/css">
+
+    <link rel="icon" href="{{ asset('images/logos/inpexid.svg') }}" type="image/x-icon">
     <!-- Vendor CSS -->
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/theme.css', 'resources/js/app.js', 'resources/js/theme.js', 'resources/js/custom.js'])
 </head>

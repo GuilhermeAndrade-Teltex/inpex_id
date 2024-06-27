@@ -15,7 +15,12 @@ class UsersRoleSeeder extends Seeder
     {
         UsersRole::create([
             'id' => 1,
-            'name' => 'Admin',
+            'name' => 'SuperAdmin',
+        ]);
+
+        UsersRole::create([
+            'id' => 2,
+            'name' => 'Monitoramento',
         ]);
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Audit;
+use App\Services\AuditService;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Services\AccessLogService;
 use App\Models\Image;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +19,13 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->singleton(AccessLogService::class, function ($app) {
+            return new AccessLogService();
+        });
+
+        $this->app->singleton(Audit::class, function ($app) {
+            return new AuditService();
+        });
     }
 
     /**
@@ -50,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
                 $firstName = $parts[0];
                 $lastName = end($parts);
 
-                $view->with('name', $firstName . ' ' . $lastName);
+                $view->with('name', $firstName);
                 $view->with('department', $user->department);
                 $view->with('image', $imagePath);
             }

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Routing\Controller;
+use App\Services\AuditService;
+use App\Services\AccessLogService;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
 use App\Models\CorsightQueue;
@@ -20,11 +22,15 @@ use App\Http\Middleware\MenuMiddleware;
 
 class StudentController extends Controller
 {
+    protected $auditService;
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, AuditService $auditService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->auditService = $auditService;
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
         $this->middleware(MenuMiddleware::class);
@@ -35,40 +41,42 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $columns = ['id', 'created_at', 'name', 'cpf'];
-
-        if ($request->ajax()) {
-            $length = $request->input('length', 10);
-            $start = $request->input('start', 0);
-            $orderIndex = $request->input('order.0.column');
-            $order = $columns[$orderIndex] ?? 'id';
-            $dir = $request->input('order.0.dir') ?? 'asc';
-
-            $query = Student::select('id', 'created_at', 'name', 'cpf');
-
-            if ($search = $request->input('search.value')) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('cpf', 'like', "%{$search}%");
-                });
-            }
-
-            $totalFiltered = $query->count();
-            $data = $query->orderBy($order, $dir)
-                ->offset($start)
-                ->limit($length)
-                ->get();
-            $totalData = Student::count();
-
-            return response()->json([
-                "draw" => intval($request->input('draw')),
-                "recordsTotal" => intval($totalData),
-                "recordsFiltered" => intval($totalFiltered),
-                "data" => $data
-            ]);
-        }
+        $this->accessLogService->logAccess("Alunos");
 
         return view('pages.student.student-list');
+    }
+
+    public function listStudent(Request $request){
+        $columns = ['id', 'created_at', 'name', 'cpf'];
+
+        $length = $request->input('length', 10);
+        $start = $request->input('start', 0);
+        $orderIndex = $request->input('order.0.column');
+        $order = $columns[$orderIndex] ?? 'id';
+        $dir = $request->input('order.0.dir') ?? 'asc';
+
+        $query = Student::select('id', 'created_at', 'name', 'cpf');
+
+        if ($search = $request->input('search.value')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('cpf', 'like', "%{$search}%");
+            });
+        }
+
+        $totalFiltered = $query->count();
+        $data = $query->orderBy($order, $dir)
+            ->offset($start)
+            ->limit($length)
+            ->get();
+        $totalData = Student::count();
+
+        return response()->json([
+            "draw" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data
+        ]);
     }
 
     /**
@@ -76,6 +84,8 @@ class StudentController extends Controller
      */
     public function create()
     {
+        $this->accessLogService->logAccess("Aluno - Inserir");
+
         $schools = School::all();
 
         $breadcrumbsItems = [
@@ -117,6 +127,9 @@ class StudentController extends Controller
             'observations' => $request->input('observations'),
         ]);
 
+        $data = ' inseriu um novo aluno.';
+        $this->auditService->insertLog($student->id, 'student', $data);
+
         // Upload da foto, se fornecida
         if ($request->hasFile('photo')) {
             $this->uploadPhoto($request, $student);
@@ -130,6 +143,8 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
+        $this->accessLogService->logAccess("Aluno - Visualizar / id: {$id}");
+
         $student = Student::findOrFail($id);
         $studentImage = Image::where('module_id', $student->id)->where('module', 'corsight_image')->first();
 
@@ -149,6 +164,8 @@ class StudentController extends Controller
      */
     public function edit(string $id)
     {
+        $this->accessLogService->logAccess("Aluno - Editar / id: {$id}");
+
         $schools = School::all();
         $student = Student::findOrFail($id);
 
@@ -168,6 +185,9 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, $id)
     {
+        $student_old = Student::findOrFail($id);
+        $student_old = $student_old->attributesToArray();
+
         $student = Student::findOrFail($id);
 
         $validatedData = $request->validated();
@@ -176,6 +196,8 @@ class StudentController extends Controller
         if ($request->hasFile('photo')) {
             $this->uploadPhoto($request, $student);
         }
+
+        $this ->auditService->editLog($id, 'student', $student_old, $validatedData);
 
         return redirect()->route('student.index')->with('success', 'Aluno atualizado com sucesso!');
     }
@@ -187,10 +209,11 @@ class StudentController extends Controller
     {
         try {
             $student = Student::findOrFail($id);
+            $this->auditService->destroyLog($id, 'student', " deletou o aluno $student->name.");
             $student->delete();
             return response()->json(['success', 'Aluno excluído com sucesso!'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao remover escola: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Erro ao remover aluno: ' . $e->getMessage()], 500);
         }
     }
 

@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class UpdateSchoolRequest extends FormRequest
+class UpdateSchoolRequest extends BasicRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,8 +19,20 @@ class UpdateSchoolRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        $rules = parent::rules();
+
+        $rules['client_id'] = ['required'];
+        $rules['name'] = ['required'];
+        $rules['responsible'] = ['nullable'];
+        $rules['regional'] = ['required'];
+        $rules["cep"] = ['nullable', 'formato_cep'];
+        $rules["address"] = ['nullable', 'max:255'];
+        $rules["number"] = ['nullable'];
+        $rules["complement"] = ['nullable', 'string', 'max:255'];
+        $rules["district"] = ['nullable', 'string', 'max:255'];
+        $rules["city"] = ['nullable', 'string', 'max:255'];
+        $rules["state"] = ['nullable', 'string'];
+
+        return $rules;
     }
 }

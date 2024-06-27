@@ -29,13 +29,17 @@
                     <x-utils.btn tagHtml="a" color="dark" text="Histórico" icon="history" size="sm" /> -->
                 </div>
 
-                <table id="datatable-tabletools" class="table" data-url="{{ route('student.index') }}">
+                <table id="datatable-tabletools" class="table table-bordered table-striped mb-0"
+                    data-url="{{ route('student.listStudent') }}">
+                    <div class="dt-buttons mb-2 pb-1 text-end">
+                    </div>
                     <thead>
                         <tr>
                             <th style="width: 10%;">ID</th>
                             <th style="width: 25%;">Data de Criação</th>
                             <th style="width: 35%;">Nome</th>
                             <th style="width: 30%;">CPF</th>
+                            <th style="width: 10%;">Ações</th>
                         </tr>
                     </thead>
                     <tbody>

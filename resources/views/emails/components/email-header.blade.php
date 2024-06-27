@@ -180,12 +180,12 @@
                                                                                 <td class="mcnImageContent"
                                                                                     valign="top"
                                                                                     style="padding-right: 0px; padding-left: 0px; padding-top: 0; padding-bottom: 0; text-align:center;">
-                                                                                    <!-- <a href="{{ route('dashboard') }}"><img
+                                                                                    <a href="{{ route('dashboard') }}"><img
                                                                                             align="center"
-                                                                                            src="https://i.imgur.com/cg214FC.jpg"
+                                                                                            src="{{ asset('images/logos/reconhecimento_facial.png') }}"
                                                                                             width="600"
                                                                                             style="max-width:100%; padding-bottom: 0; display: inline !important; vertical-align: bottom;"
-                                                                                            class="mcnImage"></a> -->
+                                                                                            class="mcnImage"></a>
 
                                                                                 </td>
                                                                             </tr>

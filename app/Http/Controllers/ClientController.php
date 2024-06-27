@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AccessLogService;
+use App\Services\AuditService;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
 use App\Models\Client;
@@ -10,11 +12,15 @@ use App\Http\Requests\UpdateClientRequest;
 
 class ClientController extends Controller
 {
+    protected $auditService;
+    protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, AuditService $auditService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->auditService = $auditService;
+        $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
     }
@@ -24,6 +30,7 @@ class ClientController extends Controller
      */
     public function index()
     {
+        $this->accessLogService->logAccess("Clientes");
         $clients = Client::all();
 
         $breadcrumbsItems = [
@@ -42,6 +49,8 @@ class ClientController extends Controller
      */
     public function create()
     {
+        $this->accessLogService->logAccess("Cliente - Inserir");
+
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Clientes' => 'client.index',
@@ -61,7 +70,10 @@ class ClientController extends Controller
     {
         $validatedData = $request->validated();
 
-        Client::create($validatedData);
+        $module_id = Client::create($validatedData);
+
+        $data = ' inseriu um novo cliente.';
+        $this->auditService->insertLog($module_id->id, 'client', $data);
 
         return redirect()->route('client.index')->with('success', 'Cliente criado com sucesso!');
     }
@@ -71,6 +83,8 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
+        $this->accessLogService->logAccess("Cliente - Visualizar / id: {$id}");
+
         $client = Client::findOrFail($id);
 
         $breadcrumbsItems = [
@@ -89,6 +103,8 @@ class ClientController extends Controller
      */
     public function edit(string $id)
     {
+        $this->accessLogService->logAccess("Cliente - Editar / id: {$id}");
+
         $client = Client::findOrFail($id);
 
         $breadcrumbsItems = [
@@ -105,10 +121,17 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(UpdateClientRequest $request, $id)
     {
         $validatedData = $request->validated();
+
+        $client_old = Client::findOrFail($id);
+        $client_old = $client_old->attributesToArray();
+        
+        $client = Client::findOrFail($id);
         $client->update($validatedData);
+
+        $this ->auditService->editLog($client->id, 'client', $client_old, $validatedData);
 
         return redirect()->route('client.index')->with('success', 'Cliente atualizado com sucesso!');
     }
@@ -120,6 +143,7 @@ class ClientController extends Controller
     {
         try {
             $client = Client::findOrFail($id);
+            $this->auditService->destroyLog($id, 'client', " deletou o usuário $client->name.");
             $client->delete();
             return response()->json(['success', 'Cliente removido com sucesso!'], 200);
         } catch (\Exception $e) {

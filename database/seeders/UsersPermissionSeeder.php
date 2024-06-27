@@ -15,20 +15,20 @@ class UsersPermissionSeeder extends Seeder
      */
     public function run()
     {
-        // Role ID fixo
-        $role_id = 1;
+        // Permissões para SuperAdmin (role_id 1)
+        $this->seedPermissionsForRole(1);
 
-        // Recupera todos os Menus1
+        // Permissões para Monitoramento (role_id 2)
+        $this->seedPermissionsForMonitoramento();
+    }
+
+    private function seedPermissionsForRole($role_id)
+    {
         $menus1 = Menus1::all();
-
-        // Recupera todos os Menus2
         $menus2 = Menus2::all();
-
-        // Recupera todos os Menus3
         $menus3 = Menus3::all();
 
         foreach ($menus1 as $menu1) {
-            // Permissões para Menus1
             UsersPermission::create([
                 'role_id' => $role_id,
                 'menu1_id' => $menu1->id,
@@ -45,7 +45,6 @@ class UsersPermissionSeeder extends Seeder
                 'modified_by' => 1
             ]);
 
-            // Permissões para Menus2 associados ao Menus1
             foreach ($menus2 as $menu2) {
                 if ($menu2->menus1_id == $menu1->id) {
                     UsersPermission::create([
@@ -64,7 +63,6 @@ class UsersPermissionSeeder extends Seeder
                         'modified_by' => 1
                     ]);
 
-                    // Permissões para Menus3 associados ao Menus2
                     foreach ($menus3 as $menu3) {
                         if ($menu3->menus2_id == $menu2->id) {
                             UsersPermission::create([
@@ -85,6 +83,36 @@ class UsersPermissionSeeder extends Seeder
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private function seedPermissionsForMonitoramento()
+    {
+        $role_id = 2;
+
+        // Recupera o Menu do Corsight
+        $corsightMenu1 = Menus1::where('name', 'Corsight')->first();
+        if ($corsightMenu1) {
+            // Recupera o Submenu corsight/pessoas
+            $corsightMenu2 = Menus2::where('name', 'Corsight Pessoas')->where('menus1_id', $corsightMenu1->id)->first();
+            if ($corsightMenu2) {
+                UsersPermission::create([
+                    'role_id' => $role_id,
+                    'menu1_id' => $corsightMenu1->id,
+                    'menu2_id' => $corsightMenu2->id,
+                    'show' => 1,
+                    'create' => 0,
+                    'edit' => 0,
+                    'destroy' => 0,
+                    'export' => 0,
+                    'access_log' => 0,
+                    'audit_log' => 0,
+                    'date_created' => now(),
+                    'date_modified' => now(),
+                    'created_by' => 1,
+                    'modified_by' => 1
+                ]);
             }
         }
     }

@@ -9,15 +9,18 @@
 
     <title>{{ config('app.name', 'Teltex') }}</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/theme.css', 'resources/js/app.js', 'resources/js/theme.js', 'resources/js/custom.js'])
+    <link rel="icon" href="{{ asset('images/logos/inpexid.svg') }}" type="image/x-icon">
 
-    </head>
-    <body class="font-sans antialiased">
-        <section class="body">
-            <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-                <!-- Page Heading -->
-                @include('components.header')
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/theme.css', 'resources/js/app.js', 'resources/js/theme.js', 'resources/js/custom.js'])
+
+</head>
+
+<body class="font-sans antialiased">
+    <section class="body">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            <!-- Page Heading -->
+            @include('components.header')
 
             <!-- Page Content -->
             <div class="inner-wrapper">

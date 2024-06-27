@@ -35,11 +35,11 @@
                     </div>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">ID</th>
-                            <th style="width: 25%;">Data de Criação</th>
-                            <th style="width: 35%;">Nome</th>
-                            <th style="width: 30%;">CPF</th>
-                            <th style="width: 10%;">Ações</th>
+                            <th>ID</th>
+                            <th>Data de Criação</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>

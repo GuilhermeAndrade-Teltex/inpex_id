@@ -5,10 +5,18 @@ $(document).ready(function () {
         $('#datatable-tabletools').DataTable().destroy();
     }
 
-    var $table = $('#datatable-tabletools');
-    $table.dataTable({
-        bProcessing: true,
-        sAjaxSource: $table.data('url'),
+    $('#datatable-tabletools').DataTable({
+        serverSide: true,
+        processing: true,
+        ajax: {
+            url: $('#datatable-tabletools').data('url'),
+            type: 'GET',
+            data: function (d) {
+                d.length = d.length || 10;
+                d.start = d.start || 0;
+                d.order = d.order || [{ column: 0, dir: 'asc' }];
+            }
+        },
         columns: [
             { data: 'id', name: 'id' },
             {
@@ -57,23 +65,23 @@ $(document).ready(function () {
             {
                 extend: 'pdf',
                 text: 'PDF',
-                customize : function(doc){
+                customize: function (doc) {
                     var colCount = new Array();
-                    $('#datatable-tabletools').find('tbody tr:first-child td').each(function(){
-                        if($(this).attr('colspan')){
-                            for(var i=1;i<=$(this).attr('colspan');$i++){
+                    $('#datatable-tabletools').find('tbody tr:first-child td').each(function () {
+                        if ($(this).attr('colspan')) {
+                            for (var i = 1; i <= $(this).attr('colspan'); $i++) {
                                 colCount.push('*');
                             }
-                        }else{ colCount.push('*'); }
+                        } else { colCount.push('*'); }
                     });
                     doc.content[1].table.widths = colCount;
                 }
             }
         ],
-        initComplete: function(settings, json) {     
+        initComplete: function (settings, json) {
             $('<div />').addClass('dt-buttons mb-2 pb-1 text-end').prependTo('#datatable-tabletools_wrapper');
 
-            $('#datatable-tabletools').DataTable().buttons().container().prependTo( '#datatable-tabletools_wrapper .dt-buttons' );
+            $('#datatable-tabletools').DataTable().buttons().container().prependTo('#datatable-tabletools_wrapper .dt-buttons');
 
             $('#datatable-tabletools_wrapper').find('.btn-secondary').removeClass('btn-secondary').addClass('btn-default');
         }

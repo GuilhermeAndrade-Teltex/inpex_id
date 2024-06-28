@@ -8,6 +8,8 @@ use Faker\Core\DateTime;
 use Illuminate\Console\Command;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
+use App\Models\CorsightQueue;
+use Illuminate\Support\Str;
 
 class ImportExcel extends Command
 {
@@ -48,14 +50,14 @@ class ImportExcel extends Command
         try {
             foreach ($rows as $index => $row) {
                 if ($index != 0) {
-                    
+
                     $this->info("Processando linha {$index}: " . implode(', ', $row));
 
                     // data de nascimento
                     $dateOfBirth = $row[4];
                     $dateTime = \DateTime::createFromFormat('d/m/Y', $dateOfBirth);
                     if ($dateTime) {
-                    $formattedDateOfBirth = $dateTime->format('Y-m-d') . ' 00:00:00';
+                        $formattedDateOfBirth = $dateTime->format('Y-m-d') . ' 00:00:00';
                     } else {
                         $this->warn("Formatação da data de nascimento incorreta {$index}, ignorando registro.");
                         fwrite($logHandle, "Linha {$index}: Data de nascimento do aluno incorreta.\n");
@@ -99,6 +101,28 @@ class ImportExcel extends Command
                             'number' => '',
                             'district' => '',
                             'state' => ''
+                        ]);
+
+                        $schoolId = str_pad($school->id, 6, '0', STR_PAD_LEFT);
+                        $schoolName = $schoolId . '_' . $school->name;
+                        $slug = Str::slug($schoolName, '_');
+
+                        $data = [
+                            'watchlist_type' => 'whitelist',
+                            'display_name' => $slug,
+                            'display_color' => '#00aa00',
+                            'watchlist_notes' => [
+                                'free_notes' => "This watchlist was created through InpexID integration at " . now()->format('d/m/Y - H:i:s') . ".",
+                            ],
+                        ];
+
+                        CorsightQueue::create([
+                            'status' => 'NOT_SEND',
+                            'module_id' => $school->id,
+                            'module' => 'corsight_watchlist',
+                            'data' => json_encode($data),
+                            'endpoint' => 'addWatchlist',
+                            'log' => '',
                         ]);
                     }
 

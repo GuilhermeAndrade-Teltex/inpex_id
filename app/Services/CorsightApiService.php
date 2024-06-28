@@ -277,7 +277,7 @@ class CorsightApiService
             $relativePath = 'public/' . $image->path_original;
 
             $imageContent = Storage::get($relativePath);
-    
+
             $image64 = base64_encode($imageContent);
             $data['pois'][0]['display_img'] = $image64;
             $data['pois'][0]['face']['image_payload']['img'] = $image64;
@@ -287,6 +287,13 @@ class CorsightApiService
 
             Log::info('Received response from Corsight API', ['status' => $response->status(), 'body' => $response->body()]);
 
+            if ($response->status() === 401) {
+                // Se a resposta for 401, tente autenticar novamente e repetir a requisição
+                $token = $this->authenticate();
+                $response = Http::withToken($token)->withOptions($this->httpOptions)
+                    ->post("{$this->baseUri}" . self::WATCHLISTS_URL, $data);
+            }
+            
             if ($response->successful()) {
                 return $response->json();
             } else {

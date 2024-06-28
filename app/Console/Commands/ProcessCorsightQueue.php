@@ -63,7 +63,7 @@ class ProcessCorsightQueue extends Command
                 } elseif ($record->endpoint === 'addFaces') {
                     $response = $this->corsightApiService->addFaces($data);
                     $student = Student::findOrFail($record->module_id);
-                    if ($response->successful()) {
+                    if ($response['metadata']['success_list']['0']['success'] = true) {
                         $record->status = 'SEND';
                         $record->log = json_encode(['message' => 'Faces added successfully', 'response' => $response->body()]);
 

@@ -2,7 +2,7 @@
 <html class="fixed">
 
 <head>
-    <title>Login - Teltex Tecnologia</title>
+    <title>Login - InpexID</title>
     <!-- Basic -->
     <meta charset="UTF-8">
     <!-- Mobile Metas -->

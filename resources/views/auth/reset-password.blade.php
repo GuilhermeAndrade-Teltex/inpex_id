@@ -23,7 +23,7 @@
             <div class="panel card-sign">
                 <div class="card-title-sign mt-3 mb-4 text-end" style="display: flex">
                     <a href="#" class="logo float-start teltex-logo">
-                        <img src="{{ asset('images/logos/inpexid.svg') }}" height="70" alt="Teltex" />
+                        <img src="{{ asset('images/logos/inpexid.svg') }}" height="70" alt="InpexID" />
                     </a>
                 </div>
                 <div class="card-body">

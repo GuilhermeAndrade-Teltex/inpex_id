@@ -37,8 +37,54 @@ $(document).ready(function () {
             },
             { data: 'name', name: 'name' },
             { data: 'cpf', name: 'cpf' },
+            {
+                data: null,
+                name: 'actions',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return `
+                        <a href="/alunos/visualizar/${row.id}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
+                        <a href="/alunos/editar/${row.id}" class="btn btn-sm btn-dark"><i class="fa fa-pencil"></i></a>
+                        <button class="btn btn-sm btn-dark remove-student" data-student_id="${row.id}"><i class="fa fa-trash"></i></button>
+
+                    `;
+                }
+            }
         ],
-        order: [[0, 'asc']]
+        order: [[0, 'asc']],
+        buttons: [
+            {
+                extend: 'print',
+                text: 'Imprimir'
+            },
+            {
+                extend: 'excel',
+                text: 'Excel'
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                customize: function (doc) {
+                    var colCount = new Array();
+                    $('#datatable-tabletools').find('tbody tr:first-child td').each(function () {
+                        if ($(this).attr('colspan')) {
+                            for (var i = 1; i <= $(this).attr('colspan'); $i++) {
+                                colCount.push('*');
+                            }
+                        } else { colCount.push('*'); }
+                    });
+                    doc.content[1].table.widths = colCount;
+                }
+            }
+        ],
+        initComplete: function (settings, json) {
+            $('<div />').addClass('dt-buttons mb-2 pb-1 text-end').prependTo('#datatable-tabletools_wrapper');
+
+            $('#datatable-tabletools').DataTable().buttons().container().prependTo('#datatable-tabletools_wrapper .dt-buttons');
+
+            $('#datatable-tabletools_wrapper').find('.btn-secondary').removeClass('btn-secondary').addClass('btn-default');
+        }
     });
 
     $(document).on("click", ".remove-student", function (e) {

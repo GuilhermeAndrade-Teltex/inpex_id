@@ -43,40 +43,40 @@ class StudentController extends Controller
     {
         $this->accessLogService->logAccess("Alunos");
 
+        return view('pages.student.student-list');
+    }
+
+    public function listStudent(Request $request){
         $columns = ['id', 'created_at', 'name', 'cpf'];
 
-        if ($request->ajax()) {
-            $length = $request->input('length', 10);
-            $start = $request->input('start', 0);
-            $orderIndex = $request->input('order.0.column');
-            $order = $columns[$orderIndex] ?? 'id';
-            $dir = $request->input('order.0.dir') ?? 'asc';
+        $length = $request->input('length', 10);
+        $start = $request->input('start', 0);
+        $orderIndex = $request->input('order.0.column');
+        $order = $columns[$orderIndex] ?? 'id';
+        $dir = $request->input('order.0.dir') ?? 'asc';
 
-            $query = Student::select('id', 'created_at', 'name', 'cpf');
+        $query = Student::select('id', 'created_at', 'name', 'cpf');
 
-            if ($search = $request->input('search.value')) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('cpf', 'like', "%{$search}%");
-                });
-            }
-
-            $totalFiltered = $query->count();
-            $data = $query->orderBy($order, $dir)
-                ->offset($start)
-                ->limit($length)
-                ->get();
-            $totalData = Student::count();
-
-            return response()->json([
-                "draw" => intval($request->input('draw')),
-                "recordsTotal" => intval($totalData),
-                "recordsFiltered" => intval($totalFiltered),
-                "data" => $data
-            ]);
+        if ($search = $request->input('search.value')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('cpf', 'like', "%{$search}%");
+            });
         }
 
-        return view('pages.student.student-list');
+        $totalFiltered = $query->count();
+        $data = $query->orderBy($order, $dir)
+            ->offset($start)
+            ->limit($length)
+            ->get();
+        $totalData = Student::count();
+
+        return response()->json([
+            "draw" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data
+        ]);
     }
 
     /**

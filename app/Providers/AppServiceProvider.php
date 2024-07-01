@@ -60,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
                 $firstName = $parts[0];
                 $lastName = end($parts);
 
-                $view->with('name', $firstName . ' ' . $lastName);
+                $view->with('name', $firstName);
                 $view->with('department', $user->department);
                 $view->with('image', $imagePath);
             }

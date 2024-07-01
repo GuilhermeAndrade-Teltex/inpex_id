@@ -9,5 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::command('emails:send')->hourly();
-Schedule::command('corsight:process-queue')->everyFiveMinutes();
+Schedule::command('emails:send')->everyMinute();
+Schedule::command('corsight:process-queue')->everyMinute();

@@ -2,7 +2,7 @@
 <html class="fixed">
 
 <head>
-    <title>Registrar Senha - Teltex Tecnologia</title>
+    <title>Registrar Senha - InpexID</title>
     <!-- Basic -->
     <meta charset="UTF-8">
     <!-- Mobile Metas -->
@@ -10,18 +10,20 @@
     <!-- Web Fonts  -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800|Shadows+Into+Light"
         rel="stylesheet" type="text/css">
+
+    <link rel="icon" href="{{ asset('images/logos/inpexid.svg') }}" type="image/x-icon">
     <!-- Vendor CSS -->
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/css/theme.css', 'resources/js/app.js', 'resources/js/theme.js', 'resources/js/custom.js'])
 </head>
 
-<body style="background: #123b67">
+<body>
     <!-- start: page -->
     <section class="body-sign">
         <div class="center-sign">
             <div class="panel card-sign">
                 <div class="card-title-sign mt-3 mb-4 text-end" style="display: flex">
                     <a href="#" class="logo float-start teltex-logo">
-                        <img src="{{ asset('images/logos/logo-white.png') }}" height="70" alt="Teltex" />
+                        <img src="{{ asset('images/logos/inpexid.svg') }}" height="70" alt="InpexID" />
                     </a>
                 </div>
                 <div class="card-body">

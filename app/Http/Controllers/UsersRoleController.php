@@ -159,6 +159,59 @@ class UsersRoleController extends Controller
         $this->accessLogService->logAccess("Editar Perfil / id: {$id}");
         $role = UsersRole::findOrFail($id);
 
+        $menus1 = Menus1::all();
+        $menus1 = $menus1->map(function ($menu) {
+            return $menu->attributesToArray();
+        })->toArray();
+        $menus2 = Menus2::all();
+        $menus2 = $menus2->map(function ($menu) {
+            return $menu->attributesToArray();
+        })->toArray();
+
+        $permissions = UsersPermission::where("role_id", $id)->get()->toArray();
+
+        $firstMenuPermissions = array();
+        foreach ($menus1 as $menu1_key => $menu1_value) {
+            foreach ($permissions as $permission_key => $permission_value) {
+                if ($permission_value['menu1_id'] == $menu1_value['id']) {
+                    $firstMenuPermissions[$menu1_value['name']] = [
+                        'permission_id' => $permission_value['id'],
+                        'menu1_id' => $menu1_value['id'],
+                        'menu1_name' => $menu1_value['name'],
+                        'menu1_icon' => $menu1_value['icon'],
+                        'create' => $permission_value['create'],
+                        'show' => $permission_value['show'],
+                        'edit' => $permission_value['edit'],
+                        'destroy' => $permission_value['destroy'],
+                        'export' => $permission_value['export'],
+                        'access_log' => $permission_value['access_log'],
+                        'audit_log' => $permission_value['audit_log'],
+                    ];
+                }
+            }
+        }
+
+        foreach ($menus2 as $menu2_key => $menu2_value) {
+            foreach ($permissions as $permission_key => $permission_value) {
+                if ($permission_value['menu2_id'] == $menu2_value['id']) {
+                    $secondMenuPermissions[$menu2_value['name']] = [
+                        'permission_id' => $permission_value['id'],
+                        'menu2_id' => $menu2_value['id'],
+                        'menu2_name' => $menu2_value['name'],
+                        'menu2_icon' => $menu2_value['icon'],
+                        'menus1_id' => $menu2_value['menus1_id'],
+                        'create' => $permission_value['create'],
+                        'show' => $permission_value['show'],
+                        'edit' => $permission_value['edit'],
+                        'destroy' => $permission_value['destroy'],
+                        'export' => $permission_value['export'],
+                        'access_log' => $permission_value['access_log'],
+                        'audit_log' => $permission_value['audit_log'],
+                    ];
+                }
+            }
+        }
+
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Perfis de Usuário' => 'roles.index',
@@ -167,7 +220,7 @@ class UsersRoleController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Editar Perfil';
 
-        return view('pages.roles.role-edit', compact('role', 'breadcrumbs', 'pageTitle'));
+        return view('pages.roles.role-edit', compact('id', 'firstMenuPermissions', 'secondMenuPermissions', 'role', 'breadcrumbs', 'pageTitle'));
     }
 
     /**
@@ -184,9 +237,49 @@ class UsersRoleController extends Controller
         $role_old = $role_old->attributesToArray();
 
         $usersRole->update($validatedData);
+
+        $permissions = $request->except('name');
+
         $this->auditService->editLog($usersRole->id, 'usersRole', $role_old, $validatedData);
 
-        return redirect()->route('roles.index')->with('success', 'Perfil de usuário atualizado com sucesso!');
+        foreach ($permissions as $permission_key => $permission_value) {
+            foreach ($permission_value as $index => $value) {
+                if ($permission_key == 'menuPermissionsFirst') {
+                    $data = [
+                        'created_by' => Auth::user()->id,
+                        'modified_by' => Auth::user()->id,
+                        'role_id' => $usersRole->id,
+                        'menu1_id' => $index,
+                        'show' => $value['view'],
+                        'edit' => $value['edit'],
+                        'create' => $value['insert'],
+                        'destroy' => $value['delete'],
+                        'export' => $value['export'],
+                        'access_log' => $value['access_log'],
+                        'audit_log' => $value['audit_log'],
+                    ];
+                    UsersPermission::where('id', $value['permission_id'])->update($data);
+                } else {
+                    $menu2_id = explode('_', $index);
+                    $data = [
+                        'created_by' => Auth::user()->id,
+                        'modified_by' => Auth::user()->id,
+                        'role_id' => $usersRole->id,
+                        'menu2_id' => $menu2_id[1],
+                        'show' => $value['view'],
+                        'edit' => $value['edit'],
+                        'create' => $value['insert'],
+                        'destroy' => $value['delete'],
+                        'export' => $value['export'],
+                        'access_log' => $value['access_log'],
+                        'audit_log' => $value['audit_log'],
+                    ];
+                    UsersPermission::where('id', $value['permission_id'])->update($data);
+                }
+            }
+        }
+
+        return response()->json(['success' => true], 200);
     }
 
     /**

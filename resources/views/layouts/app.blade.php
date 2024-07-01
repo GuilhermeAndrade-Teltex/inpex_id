@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="url-base" content="{{ env("APP_URL") }}">
 
-    <title>{{ config('app.name', 'Teltex') }}</title>
+    <title>{{ config('app.name', 'InpexID') }}</title>
 
     <link rel="icon" href="{{ asset('images/logos/inpexid.svg') }}" type="image/x-icon">
 

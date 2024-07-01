@@ -106,9 +106,9 @@ class UserController extends Controller
             'send_to' => $user->email,
             'page_title' => 'Primeiro Acesso',
             'content_title' => 'Cadastre sua senha',
-            'header_description' => 'Seu acesso a Intranet foi liberado, configure sua senha dentro de 24 horas.',
+            'header_description' => 'Seu acesso ao IpexID foi liberado, configure sua senha dentro de 24 horas.',
             'content_description' => "Olá {$user->name},<br><br>
-                Seu acesso a Intranet foi liberado. Seu nome de usuário é: <br><br><strong>{$user->email}</strong><br><br>
+                Seu acesso a IpexID foi liberado. Seu nome de usuário é: <br><br><strong>{$user->email}</strong><br><br>
                 Você deve configurar sua senha através desse <a href='" . route('password.reset', $token) . "'>link</a>..",
             'config_file' => 'InpexID',
             'status' => 'NOT_SEND',

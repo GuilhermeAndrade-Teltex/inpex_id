@@ -176,3 +176,7 @@ body{
         gap: .5rem;
     }
 }
+
+#profile-roles-table {
+    margin: 10px 2px 10px 2px;
+}

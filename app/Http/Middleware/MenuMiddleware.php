@@ -31,7 +31,16 @@ class MenuMiddleware
                     foreach ($userPermissions as $userPermission) {
                         // Verificar permissões para Menu1
                         if (!is_null($userPermission->menu1_id)) {
-                            $menu1 = Menus1::with('menus2.menus3')->find($userPermission->menu1_id);
+                            $menu1 = Menus1::with([
+                                'menus2' => function ($query) {
+                                    $query->orderBy('position')->with([
+                                        'menus3' => function ($query) {
+                                            $query->orderBy('position');
+                                        }
+                                    ]);
+                                }
+                            ])->find($userPermission->menu1_id);
+
                             if ($menu1) {
                                 if (!isset($allowedMenus[$menu1->id])) {
                                     $allowedMenus[$menu1->id] = [
@@ -61,7 +70,12 @@ class MenuMiddleware
 
                         // Verificar permissões para Menu2 diretamente
                         if (!is_null($userPermission->menu2_id)) {
-                            $menu2 = Menus2::with('menus3')->find($userPermission->menu2_id);
+                            $menu2 = Menus2::with([
+                                'menus3' => function ($query) {
+                                    $query->orderBy('position');
+                                }
+                            ])->find($userPermission->menu2_id);
+
                             if ($menu2) {
                                 $menu1 = Menus1::find($menu2->menus1_id);
                                 if (!isset($allowedMenus[$menu2->menus1_id])) {
@@ -86,6 +100,21 @@ class MenuMiddleware
                             }
                         }
                     }
+
+                    // Ordenar os menus pelo campo 'position'
+                    $allowedMenus = collect($allowedMenus)->sortBy(function ($menu) {
+                        return $menu['menu']->position;
+                    })->map(function ($menu) {
+                        $menu['submenus'] = collect($menu['submenus'])->sortBy(function ($submenu) {
+                            return $submenu['menu']->position;
+                        })->map(function ($submenu) {
+                            $submenu['submenus'] = collect($submenu['submenus'])->sortBy(function ($subsubmenu) {
+                                return $subsubmenu->position;
+                            })->values()->all();
+                            return $submenu;
+                        })->values()->all();
+                        return $menu;
+                    })->values()->all();
 
                     // Compartilhar menus permitidos com as views
                     view()->share('allowedMenus', $allowedMenus);

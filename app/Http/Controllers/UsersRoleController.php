@@ -2,21 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUsersRoleRequest;
+use App\Models\Menus1;
+use App\Models\Menus2;
+use App\Models\UsersPermission;
 use App\Models\UsersRole;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use App\Services\AuditService;
 use App\Services\AccessLogService;
 use App\Services\ValidationService;
 use App\Services\BreadcrumbService;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 class UsersRoleController extends Controller
 {
+    protected $auditService;
     protected $accessLogService;
     protected $validationService;
     protected $breadcrumbService;
 
-    public function __construct(AccessLogService $accessLogService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
+    public function __construct(AccessLogService $accessLogService, AuditService $auditService, ValidationService $validationService, BreadcrumbService $breadcrumbService)
     {
+        $this->auditService = $auditService;
         $this->accessLogService = $accessLogService;
         $this->validationService = $validationService;
         $this->breadcrumbService = $breadcrumbService;
@@ -49,6 +59,15 @@ class UsersRoleController extends Controller
     {
         $this->accessLogService->logAccess("Inserir perfil");
 
+        $menus1 = Menus1::all();
+        $menus1 = $menus1->map(function ($menu) {
+            return $menu->attributesToArray();
+        })->toArray();
+        $menus2 = Menus2::all();
+        $menus2 = $menus2->map(function ($menu) {
+            return $menu->attributesToArray();
+        })->toArray();
+
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Perfis de Usuário' => 'roles.index',
@@ -58,7 +77,7 @@ class UsersRoleController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Novo Perfil';
 
-        return view('pages.roles.role-create', compact('breadcrumbs', 'pageTitle'));
+        return view('pages.roles.role-create', compact('menus1', 'menus2', 'breadcrumbs', 'pageTitle'));
     }
 
     /**
@@ -66,11 +85,52 @@ class UsersRoleController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        $userRole = $request->except('menuPermissionsFirst', 'menuPermissionsSecond');
+        $permissions = $request->except('name');
 
-        UsersRole::create($validatedData);
+        $usersRole = UsersRole::create($userRole);
+        $usersRoleId = $usersRole->id;
+
+        foreach ($permissions as $permission_key => $permission_value) {
+            foreach ($permission_value as $index => $value) {
+                if ($permission_key == 'menuPermissionsFirst') {
+                    $data = [
+                        'created_by' => Auth::user()->id,
+                        'modified_by' => Auth::user()->id,
+                        'role_id' => $usersRoleId,
+                        'menu1_id' => $index,
+                        'show' => $value['view'],
+                        'edit' => $value['edit'],
+                        'create' => $value['insert'],
+                        'destroy' => $value['delete'],
+                        'export' => $value['export'],
+                        'access_log' => $value['access_log'],
+                        'audit_log' => $value['audit_log'],
+                    ];
+                    UsersPermission::create($data);
+                } else {
+                    $menu2_id = explode('_', $index);
+                    $data = [
+                        'created_by' => Auth::user()->id,
+                        'modified_by' => Auth::user()->id,
+                        'role_id' => $usersRoleId,
+                        'menu2_id' => $menu2_id[1],
+                        'show' => $value['view'],
+                        'edit' => $value['edit'],
+                        'create' => $value['insert'],
+                        'destroy' => $value['delete'],
+                        'export' => $value['export'],
+                        'access_log' => $value['access_log'],
+                        'audit_log' => $value['audit_log'],
+                    ];
+                    UsersPermission::create($data);
+                }
+            }
+        }
+
+        $data = ' inseriu um novo perfil.';
+        $this->auditService->insertLog($usersRole->id, 'usersRole', $data);
+
         return redirect()->route('roles.index')->with('success', 'Perfil de usuário criado com sucesso!');
     }
 
@@ -99,6 +159,74 @@ class UsersRoleController extends Controller
         $this->accessLogService->logAccess("Editar Perfil / id: {$id}");
         $role = UsersRole::findOrFail($id);
 
+        $menus1 = Menus1::all()->toArray();
+        $menus2 = Menus2::all()->toArray();
+
+        $permissions = UsersPermission::where("role_id", $id)->get()->toArray();
+
+        $firstMenuPermissions = array();
+        foreach ($menus1 as $menu1_value) {
+            $firstMenuPermissions[$menu1_value['name']] = [
+                'permission_id' => null,
+                'menu1_id' => $menu1_value['id'],
+                'menu1_name' => $menu1_value['name'],
+                'menu1_icon' => $menu1_value['icon'],
+                'create' => 0,
+                'show' => 0,
+                'edit' => 0,
+                'destroy' => 0,
+                'export' => 0,
+                'access_log' => 0,
+                'audit_log' => 0,
+            ];
+            foreach ($permissions as $permission_value) {
+                if ($permission_value['menu1_id'] == $menu1_value['id']) {
+                    $firstMenuPermissions[$menu1_value['name']] = array_merge($firstMenuPermissions[$menu1_value['name']], [
+                        'permission_id' => $permission_value['id'],
+                        'create' => $permission_value['create'],
+                        'show' => $permission_value['show'],
+                        'edit' => $permission_value['edit'],
+                        'destroy' => $permission_value['destroy'],
+                        'export' => $permission_value['export'],
+                        'access_log' => $permission_value['access_log'],
+                        'audit_log' => $permission_value['audit_log'],
+                    ]);
+                }
+            }
+        }
+
+        $secondMenuPermissions = array();
+        foreach ($menus2 as $menu2_value) {
+            $secondMenuPermissions[$menu2_value['name']] = [
+                'permission_id' => null,
+                'menu2_id' => $menu2_value['id'],
+                'menu2_name' => $menu2_value['name'],
+                'menu2_icon' => $menu2_value['icon'],
+                'menus1_id' => $menu2_value['menus1_id'],
+                'create' => 0,
+                'show' => 0,
+                'edit' => 0,
+                'destroy' => 0,
+                'export' => 0,
+                'access_log' => 0,
+                'audit_log' => 0,
+            ];
+            foreach ($permissions as $permission_value) {
+                if ($permission_value['menu2_id'] == $menu2_value['id']) {
+                    $secondMenuPermissions[$menu2_value['name']] = array_merge($secondMenuPermissions[$menu2_value['name']], [
+                        'permission_id' => $permission_value['id'],
+                        'create' => $permission_value['create'],
+                        'show' => $permission_value['show'],
+                        'edit' => $permission_value['edit'],
+                        'destroy' => $permission_value['destroy'],
+                        'export' => $permission_value['export'],
+                        'access_log' => $permission_value['access_log'],
+                        'audit_log' => $permission_value['audit_log'],
+                    ]);
+                }
+            }
+        }
+
         $breadcrumbsItems = [
             'Home' => 'dashboard',
             'Perfis de Usuário' => 'roles.index',
@@ -107,21 +235,71 @@ class UsersRoleController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Editar Perfil';
 
-        return view('pages.roles.role-edit', compact('role', 'breadcrumbs', 'pageTitle'));
+        return view('pages.roles.role-edit', compact('id', 'menus1', 'menus2', 'firstMenuPermissions', 'secondMenuPermissions', 'role', 'breadcrumbs', 'pageTitle'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, UsersRole $usersRole)
     {
-        // Validação dos dados recebidos do formulário
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255'
+            ]);
 
-        $usersRole->update($validatedData);
-        return redirect()->route('roles.index')->with('success', 'Perfil de usuário atualizado com sucesso!');
+            $role_old = UsersRole::findOrFail($usersRole->id)->attributesToArray();
+            $usersRole->update($validatedData);
+            $permissions = $request->except('name');
+            $this->auditService->editLog($usersRole->id, 'usersRole', $role_old, $validatedData);
+
+            foreach ($permissions as $permission_key => $permission_value) {
+                foreach ($permission_value as $index => $value) {
+                    $data = [
+                        'created_by' => Auth::user()->id,
+                        'modified_by' => Auth::user()->id,
+                        'date_created' => now(),
+                        'date_modified' => now(),
+                        'role_id' => $usersRole->id,
+                        'show' => $value['view'] ?? 0,
+                        'edit' => $value['edit'] ?? 0,
+                        'create' => $value['insert'] ?? 0,
+                        'destroy' => $value['delete'] ?? 0,
+                        'export' => $value['export'] ?? 0,
+                        'access_log' => $value['access_log'] ?? 0,
+                        'audit_log' => $value['audit_log'] ?? 0,
+                    ];
+
+                    // Verifica se pelo menos um campo é diferente de 0
+                    if (array_sum(array_slice($data, 5)) > 0) {
+                        if ($permission_key == 'menuPermissionsFirst') {
+                            $data['menu1_id'] = $index;
+
+                            if (isset($value['permission_id'])) {
+                                UsersPermission::where('id', $value['permission_id'])->update($data);
+                            } else {
+                                UsersPermission::create($data);
+                            }
+                        } else {
+                            $menu2_id = explode('_', $index)[1];
+                            $data['menu2_id'] = $menu2_id;
+
+                            if (isset($value['permission_id'])) {
+                                UsersPermission::where('id', $value['permission_id'])->update($data);
+                            } else {
+                                UsersPermission::create($data);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response()->json(['success' => true], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -131,10 +309,25 @@ class UsersRoleController extends Controller
     {
         try {
             $role = UsersRole::findOrFail($id);
+            $this->auditService->destroyLog($id, 'usersRole', " deletou o perfil $role->name.");
             $role->delete();
             return response()->json(['success', 'Perfil de usuário excluído com sucesso!'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao remover perfil: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Validate realtime request
+     */
+    public function validateUsersRoleRequestRequest(StoreUsersRoleRequest $request)
+    {
+        $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->toArray()], 422);
+        }
+
+        return response()->json(['success' => true], 200);
     }
 }

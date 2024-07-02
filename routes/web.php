@@ -79,6 +79,7 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::
     Route::get('/perfis/editar/{usersRole}', [UsersRoleController::class, 'edit'])->name('roles.edit');
     Route::put('/perfis/editar/{usersRole}', [UsersRoleController::class, 'update'])->name('roles.update');
     Route::delete('/perfis/{usersRole}', [UsersRoleController::class, 'destroy'])->name('roles.destroy');
+    Route::post('/perfis/validate-request', [UsersRoleController::class, 'validateUsersRoleRequestRequest'])->name('usersRole.validateRequest');
 
     // Menus
     Route::get('/config/menus', [MenuController::class, 'index'])->name('menus.index');

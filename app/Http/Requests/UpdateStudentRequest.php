@@ -16,6 +16,20 @@ class UpdateStudentRequest extends BasicRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        $data = $this->validationData();
+
+        $cpf = str_replace([".", "/", "-"], "", $data["cpf"]);
+
+        $this->merge([
+            'cpf' => $cpf,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>

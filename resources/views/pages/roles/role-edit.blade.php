@@ -53,12 +53,9 @@
                                     <td class="text-center"><input type="checkbox" class="mark-all"></td>
                                     <td class="text-center"><input type="checkbox" class="view" {{ $menu1_value['show'] == 1 ? 'checked' : '' }}></td>
                                     <td class="text-center"><input type="checkbox" class="edit" {{ $menu1_value['edit'] == 1 ? 'checked' : '' }}></td>
-                                    <td class="text-center"><input type="checkbox" class="insert" {{ $menu1_value['create'] == 1 ? 'checked' : '' }}>
-                                    </td>
-                                    <td class="text-center"><input type="checkbox" class="delete" {{ $menu1_value['destroy'] == 1 ? 'checked' : '' }}>
-                                    </td>
-                                    <td class="text-center"><input type="checkbox" class="export" {{ $menu1_value['export'] == 1 ? 'checked' : '' }}>
-                                    </td>
+                                    <td class="text-center"><input type="checkbox" class="insert" {{ $menu1_value['create'] == 1 ? 'checked' : '' }}></td>
+                                    <td class="text-center"><input type="checkbox" class="delete" {{ $menu1_value['destroy'] == 1 ? 'checked' : '' }}></td>
+                                    <td class="text-center"><input type="checkbox" class="export" {{ $menu1_value['export'] == 1 ? 'checked' : '' }}></td>
                                     <td class="text-center"><input type="checkbox" class="access_log" {{ $menu1_value['access_log'] == 1 ? 'checked' : '' }}></td>
                                     <td class="text-center"><input type="checkbox" class="audit_log" {{ $menu1_value['audit_log'] == 1 ? 'checked' : '' }}></td>
                                 </tr>

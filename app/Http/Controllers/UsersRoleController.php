@@ -159,26 +159,30 @@ class UsersRoleController extends Controller
         $this->accessLogService->logAccess("Editar Perfil / id: {$id}");
         $role = UsersRole::findOrFail($id);
 
-        $menus1 = Menus1::all();
-        $menus1 = $menus1->map(function ($menu) {
-            return $menu->attributesToArray();
-        })->toArray();
-        $menus2 = Menus2::all();
-        $menus2 = $menus2->map(function ($menu) {
-            return $menu->attributesToArray();
-        })->toArray();
+        $menus1 = Menus1::all()->toArray();
+        $menus2 = Menus2::all()->toArray();
 
         $permissions = UsersPermission::where("role_id", $id)->get()->toArray();
 
         $firstMenuPermissions = array();
-        foreach ($menus1 as $menu1_key => $menu1_value) {
-            foreach ($permissions as $permission_key => $permission_value) {
+        foreach ($menus1 as $menu1_value) {
+            $firstMenuPermissions[$menu1_value['name']] = [
+                'permission_id' => null,
+                'menu1_id' => $menu1_value['id'],
+                'menu1_name' => $menu1_value['name'],
+                'menu1_icon' => $menu1_value['icon'],
+                'create' => 0,
+                'show' => 0,
+                'edit' => 0,
+                'destroy' => 0,
+                'export' => 0,
+                'access_log' => 0,
+                'audit_log' => 0,
+            ];
+            foreach ($permissions as $permission_value) {
                 if ($permission_value['menu1_id'] == $menu1_value['id']) {
-                    $firstMenuPermissions[$menu1_value['name']] = [
+                    $firstMenuPermissions[$menu1_value['name']] = array_merge($firstMenuPermissions[$menu1_value['name']], [
                         'permission_id' => $permission_value['id'],
-                        'menu1_id' => $menu1_value['id'],
-                        'menu1_name' => $menu1_value['name'],
-                        'menu1_icon' => $menu1_value['icon'],
                         'create' => $permission_value['create'],
                         'show' => $permission_value['show'],
                         'edit' => $permission_value['edit'],
@@ -186,20 +190,31 @@ class UsersRoleController extends Controller
                         'export' => $permission_value['export'],
                         'access_log' => $permission_value['access_log'],
                         'audit_log' => $permission_value['audit_log'],
-                    ];
+                    ]);
                 }
             }
         }
 
-        foreach ($menus2 as $menu2_key => $menu2_value) {
-            foreach ($permissions as $permission_key => $permission_value) {
+        $secondMenuPermissions = array();
+        foreach ($menus2 as $menu2_value) {
+            $secondMenuPermissions[$menu2_value['name']] = [
+                'permission_id' => null,
+                'menu2_id' => $menu2_value['id'],
+                'menu2_name' => $menu2_value['name'],
+                'menu2_icon' => $menu2_value['icon'],
+                'menus1_id' => $menu2_value['menus1_id'],
+                'create' => 0,
+                'show' => 0,
+                'edit' => 0,
+                'destroy' => 0,
+                'export' => 0,
+                'access_log' => 0,
+                'audit_log' => 0,
+            ];
+            foreach ($permissions as $permission_value) {
                 if ($permission_value['menu2_id'] == $menu2_value['id']) {
-                    $secondMenuPermissions[$menu2_value['name']] = [
+                    $secondMenuPermissions[$menu2_value['name']] = array_merge($secondMenuPermissions[$menu2_value['name']], [
                         'permission_id' => $permission_value['id'],
-                        'menu2_id' => $menu2_value['id'],
-                        'menu2_name' => $menu2_value['name'],
-                        'menu2_icon' => $menu2_value['icon'],
-                        'menus1_id' => $menu2_value['menus1_id'],
                         'create' => $permission_value['create'],
                         'show' => $permission_value['show'],
                         'edit' => $permission_value['edit'],
@@ -207,7 +222,7 @@ class UsersRoleController extends Controller
                         'export' => $permission_value['export'],
                         'access_log' => $permission_value['access_log'],
                         'audit_log' => $permission_value['audit_log'],
-                    ];
+                    ]);
                 }
             }
         }
@@ -220,66 +235,71 @@ class UsersRoleController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Editar Perfil';
 
-        return view('pages.roles.role-edit', compact('id', 'firstMenuPermissions', 'secondMenuPermissions', 'role', 'breadcrumbs', 'pageTitle'));
+        return view('pages.roles.role-edit', compact('id', 'menus1', 'menus2', 'firstMenuPermissions', 'secondMenuPermissions', 'role', 'breadcrumbs', 'pageTitle'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, UsersRole $usersRole)
     {
-        // Validação dos dados recebidos do formulário
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255'
+            ]);
 
-        $role_old = UsersRole::findOrFail($usersRole->id);
-        $role_old = $role_old->attributesToArray();
+            $role_old = UsersRole::findOrFail($usersRole->id)->attributesToArray();
+            $usersRole->update($validatedData);
+            $permissions = $request->except('name');
+            $this->auditService->editLog($usersRole->id, 'usersRole', $role_old, $validatedData);
 
-        $usersRole->update($validatedData);
-
-        $permissions = $request->except('name');
-
-        $this->auditService->editLog($usersRole->id, 'usersRole', $role_old, $validatedData);
-
-        foreach ($permissions as $permission_key => $permission_value) {
-            foreach ($permission_value as $index => $value) {
-                if ($permission_key == 'menuPermissionsFirst') {
+            foreach ($permissions as $permission_key => $permission_value) {
+                foreach ($permission_value as $index => $value) {
                     $data = [
                         'created_by' => Auth::user()->id,
                         'modified_by' => Auth::user()->id,
+                        'date_created' => now(),
+                        'date_modified' => now(),
                         'role_id' => $usersRole->id,
-                        'menu1_id' => $index,
-                        'show' => $value['view'],
-                        'edit' => $value['edit'],
-                        'create' => $value['insert'],
-                        'destroy' => $value['delete'],
-                        'export' => $value['export'],
-                        'access_log' => $value['access_log'],
-                        'audit_log' => $value['audit_log'],
+                        'show' => $value['view'] ?? 0,
+                        'edit' => $value['edit'] ?? 0,
+                        'create' => $value['insert'] ?? 0,
+                        'destroy' => $value['delete'] ?? 0,
+                        'export' => $value['export'] ?? 0,
+                        'access_log' => $value['access_log'] ?? 0,
+                        'audit_log' => $value['audit_log'] ?? 0,
                     ];
-                    UsersPermission::where('id', $value['permission_id'])->update($data);
-                } else {
-                    $menu2_id = explode('_', $index);
-                    $data = [
-                        'created_by' => Auth::user()->id,
-                        'modified_by' => Auth::user()->id,
-                        'role_id' => $usersRole->id,
-                        'menu2_id' => $menu2_id[1],
-                        'show' => $value['view'],
-                        'edit' => $value['edit'],
-                        'create' => $value['insert'],
-                        'destroy' => $value['delete'],
-                        'export' => $value['export'],
-                        'access_log' => $value['access_log'],
-                        'audit_log' => $value['audit_log'],
-                    ];
-                    UsersPermission::where('id', $value['permission_id'])->update($data);
+
+                    // Verifica se pelo menos um campo é diferente de 0
+                    if (array_sum(array_slice($data, 5)) > 0) {
+                        if ($permission_key == 'menuPermissionsFirst') {
+                            $data['menu1_id'] = $index;
+
+                            if (isset($value['permission_id'])) {
+                                UsersPermission::where('id', $value['permission_id'])->update($data);
+                            } else {
+                                UsersPermission::create($data);
+                            }
+                        } else {
+                            $menu2_id = explode('_', $index)[1];
+                            $data['menu2_id'] = $menu2_id;
+
+                            if (isset($value['permission_id'])) {
+                                UsersPermission::where('id', $value['permission_id'])->update($data);
+                            } else {
+                                UsersPermission::create($data);
+                            }
+                        }
+                    }
                 }
             }
-        }
 
-        return response()->json(['success' => true], 200);
+            return response()->json(['success' => true], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

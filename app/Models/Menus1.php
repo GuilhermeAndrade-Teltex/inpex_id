@@ -34,7 +34,7 @@ class Menus1 extends Model
 
     public function menus2()
     {
-        return $this->hasMany(Menus2::class, 'menus1_id');
+        return $this->hasMany(Menus2::class, 'menus1_id')->orderBy('position');
     }
 
     public function usersPermissions()

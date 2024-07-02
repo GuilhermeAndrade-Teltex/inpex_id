@@ -182,11 +182,11 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
-        // Excluir usuário
-        $user = User::findOrFail($id);
-        $user->delete();
+            // Excluir usuário
+            $user = User::findOrFail($id);
+            $user->delete();
 
-        return response()->json(['success', 'Usuário excluído com sucesso'], 200);
+            return response()->json(['success', 'Usuário excluído com sucesso'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao remover usuário: ' . $e->getMessage()], 500);
         }

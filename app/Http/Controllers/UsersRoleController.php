@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUsersRoleRequest;
+use App\Models\Image;
 use App\Models\Menus1;
 use App\Models\Menus2;
+use App\Models\User;
 use App\Models\UsersPermission;
 use App\Models\UsersRole;
 use Illuminate\Http\Request;
@@ -234,8 +236,19 @@ class UsersRoleController extends Controller
 
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Editar Perfil';
+        
+        $users = User::where('role_id', $id)->get();
+        foreach ($users as $index => $user) {
+            $profile_photo = $user->images->where('module', 'users')->pluck('path_original')->toArray();
+            $user->status == 'active' ? $users[$index]->status = 'Ativo' : $users[$index]->status = 'Inativo';
+            if (empty($profile_photo)) {
+                $users[$index]['profile_photo'] = asset('images/logos/profile-default.jpg');
+            } else {
+                $users[$index]['profile_photo'] = asset('storage/' . $profile_photo[0]);
+            }
+        }
 
-        return view('pages.roles.role-edit', compact('id', 'menus1', 'menus2', 'firstMenuPermissions', 'secondMenuPermissions', 'role', 'breadcrumbs', 'pageTitle'));
+        return view('pages.roles.role-edit', compact('id', 'firstMenuPermissions', 'secondMenuPermissions', 'users', 'role', 'breadcrumbs', 'pageTitle'));
     }
 
 

@@ -52,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
                     ->first();
 
                 if ($image) {
-                    $imagePath = $intranetUrl . $image->path_cropped;
+                    $imagePath = asset('storage/' . $image->path_original);
                 }
 
                 $fullName = $user->name;

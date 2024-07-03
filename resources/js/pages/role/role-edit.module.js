@@ -61,3 +61,16 @@ $(document).on("click", ".mark-all", function () {
         .find('input[type="checkbox"]')
         .prop("checked", this.checked);
 });
+
+$(document).on("click", ".removeRoleUser", function () {
+    let userId = $(this).data('user_id');
+
+    http.put(`/usuarios/update-role/${userId}`, userId)
+        .then((response) => {
+            noty("Sucesso", "Usuário removido do perfil com sucesso.", "success");
+            // window.location = `${window.BASE_URL}/perfis`;
+        })
+        .catch((error) => {
+            noty("Erro", "Não foi possível remover o usuário do perfil.", "error");
+        });
+});

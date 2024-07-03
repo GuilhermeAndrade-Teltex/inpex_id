@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Image;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\UsersRole;
@@ -31,7 +33,8 @@ class ProfileController extends Controller
         $this->validationService = $validationService;
     }
 
-    public function show() {
+    public function show()
+    {
         $this->accessLogService->logAccess("Meu perfil");
 
         $user = Auth::user();
@@ -42,7 +45,11 @@ class ProfileController extends Controller
         $user->date_created = Carbon::parse($user->date_created)->format('d/m/Y');
         $user->date_modified = Carbon::parse($user->date_modified)->format('d/m/Y');
         $user->cpf = preg_replace("/^(\d{3})(\d{3})(\d{3})(\d{2})$/", "$1.$2.$3-$4", $user->cpf);
+
         $role = UsersRole::find($user->role_id);
+
+        $user_image = Image::where('module_id', $user->id)->where('module', 'users')->pluck('path_original');
+        $user_image = $user_image->toArray();
 
         $breadcrumbsItems = [
             'Home' => 'dashboard',
@@ -52,7 +59,7 @@ class ProfileController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Meu Perfil';
 
-        return view('profile.profile', compact('user', 'role','breadcrumbs','pageTitle'));
+        return view('profile.profile', compact('user', 'role', 'user_image', 'breadcrumbs', 'pageTitle'));
     }
     /**
      * Display the user's profile form.
@@ -87,6 +94,33 @@ class ProfileController extends Controller
         $user->update($validatedData);
 
         $request->user()->save();
+
+        $folderPath = "public/images/users";
+
+        if (!Storage::exists($folderPath)) {
+            Storage::makeDirectory($folderPath);
+        }
+
+        $profile_photo = $request->file('profilePicture');
+        $imageName = $profile_photo->getClientOriginalName();
+        $path = $profile_photo->storeAs($folderPath, $imageName);
+
+        Image::updateOrCreate(
+            [                
+                'module' => 'users',
+                'module_id' => $user->id,
+            ],
+            [
+                'status' => 'ACTIVE',
+                'date_created' => now(),
+                'date_modified' => now(),
+                'order' => 1,
+                'source' => '',
+                'name_original' => $imageName,
+                'path_original' => "images/users/$imageName",
+                'extension' => $profile_photo->getClientOriginalExtension(),
+            ]
+        );
 
         Auth::logout();
         return Redirect::to('/login');

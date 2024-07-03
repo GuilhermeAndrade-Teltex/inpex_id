@@ -28,7 +28,7 @@ class BasicRequest extends FormRequest
             'email' => ['string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['confirmed', Rules\Password::defaults()],
             'perfil' => [''],
-            'cpf' => ['digits:11', 'unique:' . User::class],
+            'cpf' => ['digits:14', 'unique:' . User::class],
         ];
 
         return $rules;

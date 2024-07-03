@@ -97,7 +97,9 @@
                 </div>
             </div>
             <footer class="card-footer text-end">
-                <x-utils.btn tagHtml="a" color="primary" text="Editar" ref="{{ route('client.edit', $client) }}" />
+                @if ($allowedActions['edit'])
+                    <x-utils.btn tagHtml="a" color="primary" text="Editar" ref="{{ route('client.edit', $client) }}" />
+                @endif
                 <x-utils.btn tagHtml="a" color="default" text="Cancelar" ref="{{ route('client.index') }}" />
             </footer>
         </x-utils.container>

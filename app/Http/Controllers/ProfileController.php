@@ -102,25 +102,27 @@ class ProfileController extends Controller
         }
 
         $profile_photo = $request->file('profilePicture');
-        $imageName = $profile_photo->getClientOriginalName();
-        $path = $profile_photo->storeAs($folderPath, $imageName);
-
-        Image::updateOrCreate(
-            [                
-                'module' => 'users',
-                'module_id' => $user->id,
-            ],
-            [
-                'status' => 'ACTIVE',
-                'date_created' => now(),
-                'date_modified' => now(),
-                'order' => 1,
-                'source' => '',
-                'name_original' => $imageName,
-                'path_original' => "images/users/$imageName",
-                'extension' => $profile_photo->getClientOriginalExtension(),
-            ]
-        );
+        if ($profile_photo) {
+            $imageName = $profile_photo->getClientOriginalName();
+            $path = $profile_photo->storeAs($folderPath, $imageName);
+    
+            Image::updateOrCreate(
+                [                
+                    'module' => 'users',
+                    'module_id' => $user->id,
+                ],
+                [
+                    'status' => 'ACTIVE',
+                    'date_created' => now(),
+                    'date_modified' => now(),
+                    'order' => 1,
+                    'source' => '',
+                    'name_original' => $imageName,
+                    'path_original' => "images/users/$imageName",
+                    'extension' => $profile_photo->getClientOriginalExtension(),
+                ]
+            );
+        }
 
         Auth::logout();
         return Redirect::to('/login');

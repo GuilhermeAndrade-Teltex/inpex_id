@@ -56,7 +56,8 @@
                         </div>
                     </div>
                     <div class="form-group row pb-4">
-                        <label class="col-lg-4 control-label text-lg-end pt-1" for="cpf_responsible">CPF do Responsável:</label>
+                        <label class="col-lg-4 control-label text-lg-end pt-1" for="cpf_responsible">CPF do
+                            Responsável:</label>
                         <div class="col-lg-8">
                             <p class="form-control-static mb-0">{{ $student->cpf_responsible }}</p>
                         </div>
@@ -107,13 +108,16 @@
             @if ($studentImage)
                 <div class="row form-group pb-3">
                     <div class="col-lg-12 text-center">
-                        <img id="student_photo" src="{{ asset('storage/' . $studentImage->path_original) }}" alt="Foto do Aluno">
+                        <img id="student_photo" src="{{ asset('storage/' . $studentImage->path_original) }}"
+                            alt="Foto do Aluno">
                     </div>
                 </div>
             @endif
 
             <footer class="card-footer text-end">
-                <x-utils.btn tagHtml="a" ref="{{ route('student.edit', $student) }}" color="primary" text="Editar" />
+                @if ($allowedActions['edit'])
+                    <x-utils.btn tagHtml="a" ref="{{ route('student.edit', $student) }}" color="primary" text="Editar" />
+                @endif
                 <x-utils.btn tagHtml="a" ref="{{ route('student.index') }}" color="default" text="Cancelar" />
             </footer>
         </x-utils.container>

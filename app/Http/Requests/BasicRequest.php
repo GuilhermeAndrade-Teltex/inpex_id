@@ -89,6 +89,7 @@ class BasicRequest extends FormRequest
             'responsible_email.max' => 'O email do responsável não pode exceder :max caracteres.',
 
             'cnpj.required' => 'O campo CNPJ é obrigatório.',
+            'cnpj.unique' => 'O CNPJ já está cadastrado.',
             'cnpj.formato_cnpj' => 'Informe um CNPJ válido.',
             'cnpj.max' => 'O CNPJ não pode exceder :max caracteres.',
 

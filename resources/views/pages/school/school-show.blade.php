@@ -100,8 +100,10 @@
             </div>
 
             <footer class="card-footer text-end">
-                <x-utils.btn tagHtml="a" ref="{{ route('school.edit', ['id' => $school->id]) }}" color="primary"
-                    text="Editar" />
+                @if ($allowedActions['edit'])
+                    <x-utils.btn tagHtml="a" ref="{{ route('school.edit', ['id' => $school->id]) }}" color="primary"
+                        text="Editar" />
+                @endif
                 <x-utils.btn tagHtml="a" ref="{{ route('school.index') }}" color="default" text="Cancelar" />
             </footer>
         </x-utils.container>

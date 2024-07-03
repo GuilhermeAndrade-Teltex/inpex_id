@@ -46,12 +46,18 @@
                                         href="{{ route('user.show', ['id' => $user->id]) }}">{{ $user->fullname }}</a></td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    <a href="{{ route('user.show', $user->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-eye"></i></a>
-                                    <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-pencil"></i></a>
-                                    <a class="btn btn-sm btn-dark" id="remove-user" data-user_id="{{$user->id}}"><i
-                                            class="fa fa-trash"></i></a>
+                                    @if ($allowedActions['show'])
+                                        <a href="{{ route('user.show', $user->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-eye"></i></a>
+                                    @endif
+                                    @if ($allowedActions['edit'])
+                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-pencil"></i></a>
+                                    @endif
+                                    @if ($allowedActions['destroy'])
+                                        <a class="btn btn-sm btn-dark" id="remove-user" data-user_id="{{$user->id}}"><i
+                                                class="fa fa-trash"></i></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

@@ -16,7 +16,7 @@
                             <th>ID</th>
                             <th>Tipo Menu</th>
                             <th>Nome do Menu</th>
-                            <th>Actions</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>

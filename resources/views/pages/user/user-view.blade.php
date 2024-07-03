@@ -41,8 +41,10 @@
                 </div>
             </div>
             <footer class="card-footer text-end">
-                <x-utils.btn tagHtml="a" ref="{{ route('user.edit', ['id' => $user->id]) }}" color="primary"
-                    text="Editar" />
+                @if ($allowedActions['edit'])
+                    <x-utils.btn tagHtml="a" ref="{{ route('user.edit', ['id' => $user->id]) }}" color="primary"
+                        text="Editar" />
+                @endif
                 <x-utils.btn tagHtml="a" ref="{{ route('user.index') }}" color="default" text="Cancelar" />
             </footer>
         </x-utils.container>

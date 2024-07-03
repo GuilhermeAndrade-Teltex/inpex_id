@@ -45,12 +45,18 @@
                                 </td>
                                 <td>{{ $school->regional }}</td>
                                 <td>
-                                    <a href="{{ route('school.show', $school->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-eye"></i></a>
-                                    <a href="{{ route('school.edit', $school->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-pencil"></i></a>
-                                    <a class="btn btn-sm btn-dark" id="remove-item" data-school_id="{{$school->id}}"><i
-                                            class="fa fa-trash"></i></a>
+                                    @if ($allowedActions['show'])
+                                        <a href="{{ route('school.show', $school->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-eye"></i></a>
+                                    @endif
+                                    @if ($allowedActions['edit'])
+                                        <a href="{{ route('school.edit', $school->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-pencil"></i></a>
+                                    @endif
+                                    @if ($allowedActions['destroy'])
+                                        <a class="btn btn-sm btn-dark" id="remove-item" data-school_id="{{$school->id}}"><i
+                                                class="fa fa-trash"></i></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

@@ -13,6 +13,7 @@
                 </div>
                 <h2 class="card-title">Alunos</h2>
             </header>
+            <input type="hidden" value="{{ json_encode($allowedActions) }}" id="allowed_actions">
             <div class="card-body">
                 <div class="actions-bar">
                     <span class="label">Ações:</span>
@@ -21,9 +22,10 @@
                             icon="user-plus" size="sm" />
                     @endif
 
-                    <x-utils.btn ref="{{ route('studentImage.create') }}" tagHtml="a" color="dark"
-                        text="Carregar Alunos" icon="file-alt" size="sm" />
-
+                    @if ($allowedActions['create'])
+                        <x-utils.btn ref="{{ route('studentImage.create') }}" tagHtml="a" color="dark"
+                            text="Carregar Alunos" icon="file-alt" size="sm" />
+                    @endif
                     <!-- <x-utils.btn tagHtml="a" color="dark" text="Logs de Acessos" icon="file-alt" size="sm" />
 
                     <x-utils.btn tagHtml="a" color="dark" text="Histórico" icon="history" size="sm" /> -->

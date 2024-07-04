@@ -40,7 +40,8 @@
 /* STUDENT SHOW */
 #student_photo {
     max-width: 50%;
-    height: auto;
+    border-radius: 50%;
+    border: solid black;
 }
 /* STUDENT SHOW */
 

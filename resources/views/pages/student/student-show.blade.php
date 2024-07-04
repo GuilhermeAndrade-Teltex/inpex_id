@@ -109,7 +109,7 @@
                 <div class="row form-group pb-3">
                     <div class="col-lg-12 text-center">
                         <img id="student_photo" src="{{ asset('storage/' . $studentImage->path_original) }}"
-                            alt="Foto do Aluno">
+                            alt="Foto do Aluno" height="180" width="180">
                     </div>
                 </div>
             @endif

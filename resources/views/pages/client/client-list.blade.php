@@ -45,11 +45,18 @@
                                         href="{{ route('client.show', ['id' => $client->id]) }}">{{ $client->cnpj }}</a>
                                 </td>
                                 <td>
-                                    <a href="{{ route('client.show', $client->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-eye"></i></a>
-                                    <a href="{{ route('client.edit', $client->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-pencil"></i></a>
-                                    <a class="btn btn-sm btn-dark" id="remove-client" data-client_id="{{$client->id}}"><i class="fa fa-trash"></i></a>
+                                    @if ($allowedActions['show'])
+                                        <a href="{{ route('client.show', $client->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-eye"></i></a>
+                                    @endif
+                                    @if ($allowedActions['edit'])
+                                        <a href="{{ route('client.edit', $client->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-pencil"></i></a>
+                                    @endif
+                                    @if ($allowedActions['destroy'])
+                                        <a class="btn btn-sm btn-dark" id="remove-client" data-client_id="{{$client->id}}"><i
+                                                class="fa fa-trash"></i></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

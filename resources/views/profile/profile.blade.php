@@ -1,3 +1,5 @@
+@vite(['resources/js/pages/profile/profile.module.js'])
+
 @extends('layouts.app')
 @section('main')
 <section role="main" class="content-body">
@@ -36,6 +38,13 @@
                         value="{{ old('role_id', $role->name) }}" readonly="true" />
                     <x-form_components.input name="cpf" label="CPF" type_input="text" form_group_width="6"
                         value="{{ old('cpf', $user->cpf) }}" readonly="true" />
+                </div>
+                <div class="row justify-content-end">
+                    <x-form_components.input name="profilePicture" label="Escolha sua foto de perfil" type_input="file"
+                        form_group_width="12" accept="image/*" />
+                </div>
+                <div id="preview">
+                    <img id="profilePicturePreview" src="{{ !empty($user_image) ? asset('storage/' . $user_image[0]) : asset('images/logos/profile-default.jpg') }}" alt="Preview da Foto de Perfil" height="160" width="160">
                 </div>
                 <div class="row justify-content-end">
                     <div class="col-lg-6">

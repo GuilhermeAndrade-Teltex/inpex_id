@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified', MenuMiddleware::class, EventsMiddleware::
     Route::put('/usuarios/editar/{id}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/usuarios/{id}', [UserController::class, 'destroy'])->name('user.destroy');
     Route::post('/usuarios/validate-request', [UserController::class, 'validateUserRequest'])->name('user.validateRequest');
+    Route::put('/usuarios/update-role/{id}', [UserController::class, 'updateUserRole']);
 
     // Client
     Route::get('/clientes', [ClientController::class, 'index'])->name('client.index');

@@ -205,4 +205,14 @@ class UserController extends Controller
 
         return response()->json(['success' => true], 200);
     }
+
+    public function updateUserRole(string $id)
+    {
+        $roleDefault = [
+            'role_id' => 2
+        ];
+
+        User::where('id', $id)->update($roleDefault);
+        return response()->json(['success'=> true], 200);
+    }
 }

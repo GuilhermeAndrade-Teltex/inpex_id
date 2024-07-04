@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUsersRoleRequest;
+use App\Models\Image;
 use App\Models\Menus1;
 use App\Models\Menus2;
+use App\Models\User;
 use App\Models\UsersPermission;
 use App\Models\UsersRole;
 use Illuminate\Http\Request;
@@ -93,37 +95,41 @@ class UsersRoleController extends Controller
 
         foreach ($permissions as $permission_key => $permission_value) {
             foreach ($permission_value as $index => $value) {
-                if ($permission_key == 'menuPermissionsFirst') {
-                    $data = [
-                        'created_by' => Auth::user()->id,
-                        'modified_by' => Auth::user()->id,
-                        'role_id' => $usersRoleId,
-                        'menu1_id' => $index,
-                        'show' => $value['view'],
-                        'edit' => $value['edit'],
-                        'create' => $value['insert'],
-                        'destroy' => $value['delete'],
-                        'export' => $value['export'],
-                        'access_log' => $value['access_log'],
-                        'audit_log' => $value['audit_log'],
-                    ];
-                    UsersPermission::create($data);
-                } else {
-                    $menu2_id = explode('_', $index);
-                    $data = [
-                        'created_by' => Auth::user()->id,
-                        'modified_by' => Auth::user()->id,
-                        'role_id' => $usersRoleId,
-                        'menu2_id' => $menu2_id[1],
-                        'show' => $value['view'],
-                        'edit' => $value['edit'],
-                        'create' => $value['insert'],
-                        'destroy' => $value['delete'],
-                        'export' => $value['export'],
-                        'access_log' => $value['access_log'],
-                        'audit_log' => $value['audit_log'],
-                    ];
-                    UsersPermission::create($data);
+                $data = [
+                    'created_by' => Auth::user()->id,
+                    'modified_by' => Auth::user()->id,
+                    'date_created' => now(),
+                    'date_modified' => now(),
+                    'role_id' => $usersRole->id,
+                    'show' => $value['view'] ?? 0,
+                    'edit' => $value['edit'] ?? 0,
+                    'create' => $value['insert'] ?? 0,
+                    'destroy' => $value['delete'] ?? 0,
+                    'export' => $value['export'] ?? 0,
+                    'access_log' => $value['access_log'] ?? 0,
+                    'audit_log' => $value['audit_log'] ?? 0,
+                ];
+
+                // Verifica se pelo menos um campo é diferente de 0
+                if (array_sum(array_slice($data, 5)) > 0) {
+                    if ($permission_key == 'menuPermissionsFirst') {
+                        $data['menu1_id'] = $index;
+
+                        if (isset($value['permission_id'])) {
+                            UsersPermission::where('id', $value['permission_id'])->update($data);
+                        } else {
+                            UsersPermission::create($data);
+                        }
+                    } else {
+                        $menu2_id = explode('_', $index)[1];
+                        $data['menu2_id'] = $menu2_id;
+
+                        if (isset($value['permission_id'])) {
+                            UsersPermission::where('id', $value['permission_id'])->update($data);
+                        } else {
+                            UsersPermission::create($data);
+                        }
+                    }
                 }
             }
         }
@@ -235,7 +241,18 @@ class UsersRoleController extends Controller
         $breadcrumbs = $this->breadcrumbService->generateBreadcrumbs($breadcrumbsItems);
         $pageTitle = 'Editar Perfil';
 
-        return view('pages.roles.role-edit', compact('id', 'menus1', 'menus2', 'firstMenuPermissions', 'secondMenuPermissions', 'role', 'breadcrumbs', 'pageTitle'));
+        $users = User::where('role_id', $id)->get();
+        foreach ($users as $index => $user) {
+            $profile_photo = $user->images->where('module', 'users')->pluck('path_original')->toArray();
+            $user->status == 'active' ? $users[$index]->status = 'Ativo' : $users[$index]->status = 'Inativo';
+            if (empty($profile_photo)) {
+                $users[$index]['profile_photo'] = asset('images/logos/profile-default.jpg');
+            } else {
+                $users[$index]['profile_photo'] = asset('storage/' . $profile_photo[0]);
+            }
+        }
+
+        return view('pages.roles.role-edit', compact('id', 'firstMenuPermissions', 'secondMenuPermissions', 'users', 'role', 'breadcrumbs', 'pageTitle'));
     }
 
 

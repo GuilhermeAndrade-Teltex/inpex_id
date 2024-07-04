@@ -15,11 +15,11 @@ class ProfileUpdateRequest extends BasicRequest
      */
     public function rules(): array
     {
-        $rules = parent::rules();
 
         $rules['fullname'] = ['required', 'string', 'max:255'];
         $rules['email'] = ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)];
         $rules['password'] = ['required'];
+        $rules['profilePicture'] = ['nullable', 'max:2048'];
 
         return $rules;
     }

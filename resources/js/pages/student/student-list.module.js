@@ -1,6 +1,30 @@
 import http from "../../axiosHttp";
 
 $(document).ready(function () {
+
+    let permissions = $("#allowed_actions").val();
+    permissions = JSON.parse(permissions);
+
+    let create = '';
+    let edit = '';
+    let show = '';
+    let destroy = '';
+
+    $.each(permissions, function(index, value) {
+        if (index == 'create') {
+            create = value;
+        }
+        if (index == 'edit') {
+            edit = value;
+        }
+        if (index == 'show') {
+            show = value;
+        }
+        if (index == 'destroy') {
+            destroy = value;
+        }
+    });
+
     if ($.fn.DataTable.isDataTable('#datatable-tabletools')) {
         $('#datatable-tabletools').DataTable().destroy();
     }
@@ -44,9 +68,9 @@ $(document).ready(function () {
                 searchable: false,
                 render: function (data, type, row) {
                     return `
-                        <a href="/alunos/visualizar/${row.id}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
-                        <a href="/alunos/editar/${row.id}" class="btn btn-sm btn-dark"><i class="fa fa-pencil"></i></a>
-                        <button class="btn btn-sm btn-dark remove-student" data-student_id="${row.id}"><i class="fa fa-trash"></i></button>
+                        ${show ? `<a href="/alunos/visualizar/${row.id}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>` : ''}
+                        ${edit ? `<a href="/alunos/editar/${row.id}" class="btn btn-sm btn-dark"><i class="fa fa-pencil"></i></a>` : ''}
+                        ${destroy ? `<button class="btn btn-sm btn-dark remove-student" data-student_id="${row.id}"><i class="fa fa-trash"></i></button>` : '' }
 
                     `;
                 }

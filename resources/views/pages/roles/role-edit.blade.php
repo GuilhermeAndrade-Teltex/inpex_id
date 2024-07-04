@@ -97,6 +97,37 @@
             </form>
         </x-utils.container>
     </div>
+
+    <div class="col-lg-12 user-card">
+        <x-utils.container cardTitle="Usuários" cardSubtitle="Usuários vinculados a esse perfil.">
+            <table class="table table-condensed table-bordered table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th class="text-center align-items-center">Id</th>
+                        <th class="text-center align-items-center">Foto</th>
+                        <th class="text-center align-items-center">Status</th>
+                        <th class="text-center align-items-center">Nome</th>
+                        <th class="text-center align-items-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($users as $user)
+                        <tr>
+                            <td class="text-center align-middle"><span>{{ $user['id'] }}</span></td>
+                            <td class="text-center align-middle"><img src="{{ $user['profile_photo'] }}"
+                                    alt="{{ $user['name']}}" id="user_profile_photo"></td>
+                            <td class="text-center align-middle">
+                                <btn class="bg-dark" id="status_btn">{{ $user['status'] }}</btn>
+                            </td>
+                            <td class="text-center align-middle"><span>{{ $user['name'] }}</span></td>
+                            <td class="text-center align-middle"><a href="" class="btn btn-sm btn-dark removeRoleUser" data-user_id="{{ $user['id'] }}"><i
+                                        class="fa fa-trash"></i></a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </x-utils.container>
+    </div>
 </section>
 </div>
 </section>

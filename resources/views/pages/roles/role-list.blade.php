@@ -49,11 +49,14 @@
                                 <td>{{ $role->name }}</td>
                                 <td>{{ \Carbon\Carbon::parse($role->modifiedBy)->format('d/m/Y') }}</td>
                                 <td>
-                                    <a href="{{ route('roles.show', $role->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-eye"></i></a>
-                                    <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-dark"><i
-                                            class="fa fa-pencil"></i></a>
-                                    <a href="" class="btn btn-sm btn-dark" id="remove-role" data-role_id="{{$role->id}}"><i class="fa fa-trash"></i></a>
+                                    @if ($role->id != 1 && $role->id != 2 && $allowedActions['edit'])
+                                        <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-dark"><i
+                                                class="fa fa-pencil"></i></a>
+                                    @endif
+                                    @if ($role->id != 1 && $role->id != 2 && $allowedActions['destroy'])
+                                        <a href="" class="btn btn-sm btn-dark" id="remove-role" data-role_id="{{$role->id}}"><i
+                                                class="fa fa-trash"></i></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
